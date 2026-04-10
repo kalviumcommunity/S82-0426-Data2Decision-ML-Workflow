@@ -295,6 +295,62 @@ A Machine Learning model must only learn from information that would be availabl
 
 ---
 
+## Evaluation using MSE and R²
+
+### What is MSE?
+- **Mean Squared Error**: Measures the average of the squares of the errors.
+- **Penalty Mechanism**: By squaring the differences, MSE penalizes large mistakes much more heavily than small ones, making it ideal for detecting outliers.
+
+### What is R²?
+- **Coefficient of Determination**: Measures the proportion of the variance in the target that is predictable from the features.
+- **Baseline Comparison**: An R² of 0 indicates the model is no better than guessing the mean (the baseline).
+
+### Results
+**Baseline:**
+- **MSE**: 17,133.35
+- **RMSE**: 130.89
+- **R²**: ~0.00 (Zero predictive utility)
+
+**Model:**
+- **MSE**: 214.01
+- **RMSE**: 14.62
+- **R²**: 0.98 (Excellent fit)
+
+### Interpretation
+- **Lower MSE/RMSE**: Indicates that the model's predictions are tightly clustered around the true values.
+- **Higher R²**: Confirms that the model successfully learned 98% of the data's structural relationships.
+
+### Cross Validation
+- **Mean R²**: 0.9873 ± 0.0028
+- **Mean RMSE**: 14.66 ± 0.57
+- **Stability**: The extremely low standard deviation in both R² and RMSE indicates a highly stable and reliable model.
+
+### Key Insight
+- **MSE** tells us the magnitude of the error (penalizing the "worst cases").
+- **R²** tells us the overall "usefulness" of the model compared to a naive guess.
+- Both must be used together to ensure the model is both accurate and consistent.
+
+---
+
+## Video Answer: Key Regression Questions
+
+### Q1: Is the model better?
+**👉 YES.** Every metric shows a massive improvement. The MSE dropped by nearly 98%, and R² jumped from zero to near-perfect.
+
+### Q2: What if R² = 0.20?
+**👉 Weak/Moderate.** It means the model only captures 20% of the information. While technically better than a baseline, it’s not yet reliable for critical decisions.
+
+### Q3: What if R² is negative?
+**👉 Critical Failure.** A negative R² means the model is actually performing worse than a naive mean-predictor. This usually happens due to severe overfitting or a highly inappropriate model choice.
+
+### Q4: High CV variation?
+**👉 Unstable.** If the R² fluctuates wildly between folds (e.g., 0.9 to 0.4), the model is "lucky" on some data and "lost" on others. It lacks generalization power.
+
+### Q5: Should we deploy a model with R²=0.20?
+**👉 ❌ Not yet.** 20% variance explanation is rarely enough for production. It needs more features, better preprocessing, or a more complex algorithm to be truly effective.
+
+---
+
 ## Video Answer: Advanced Evaluation Nuances
 
 ### Q1: Is the model better?
