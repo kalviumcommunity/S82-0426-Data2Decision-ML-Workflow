@@ -780,9 +780,52 @@ We want the model to be "highly suspicious." Even at a 10% or 20% probability of
 - **Distance becomes meaningless**: The "closeness" signal is drowned out by the volume of dimensions.
 - **Prediction slow**: The O(N) complexity for every prediction makes it impossible to scale for real-time applications.
 
-**Solution:**
-- **Dimensionality Reduction**: Use PCA to compress 60 features into 5-10 primary components.
-- **Switch Models**: Use Random Forest or Logistic Regression, which learn a compact "formula" during training that allows for near-instant predictions.
+- **Solution**: Use PCA for dimensionality reduction or switch to a faster "eager learner" like Logistic Regression.
+
+---
+
+## Bias-Variance Analysis
+
+### Initial Model
+- **Train Accuracy**: 0.6250
+- **Test Accuracy**: 0.5000
+- **CV Score**: 0.7778 ± 0.15
+
+### Diagnosis
+**👉 Model shows High Bias (Underfitting).**
+The training accuracy is below the target threshold (70%), indicating the model is too simple to capture even the training patterns.
+
+### Reason
+- **Gap analysis**: The train and test accuracy are both low and close to each other.
+- **Complexity**: The regularization strength was too high (C=0.1), preventing the model from fitting the text features properly.
+
+### Fix Applied
+**👉 Increased Model Complexity.**
+Reduced regularization (set C=10.0) allowed the model to give more weight to the TF-IDF features.
+
+### Final Results
+- **Train Accuracy**: 1.0000
+- **Test Accuracy**: 0.5000
+
+### Conclusion
+Model performance shifted from High Bias to High Variance. In this tiny 10-row dataset, the model quickly overfits the training labels when complexity is increased, demonstrating how sensitive the balance is on limited data.
+
+---
+
+## Video Answers: Deep Learning Diagnostics
+
+### Q: Decision Tree with Train = 100% and Test = 71%
+**👉 Answer: High Variance (Overfitting).**
+The model has perfectly memorized the training data but fails to generalize, causing a massive 29% performance gap.
+
+### Why depth=4 helped?
+It limited the complexity of the tree. Instead of creating a leaf for every individual tiny pattern (noise), it was forced to find broader, more reliable trends that generalize better to new data.
+
+### CV stability?
+A stable cross-validation score (low standard deviation) indicates that the model is consistent across different data segments, which is a key sign of a low-variance, balanced model.
+
+### Does more data help?
+**👉 YES.** For High Variance problems, adding more data helps the model learn the true distribution instead of specific noise. However, for High Bias (Underfitting), more data rarely helps; you usually need a more complex model or better features.
 
 ---
 
