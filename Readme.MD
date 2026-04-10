@@ -829,6 +829,54 @@ A stable cross-validation score (low standard deviation) indicates that the mode
 
 ---
 
+## Decision Tree Model
+
+### What is a Decision Tree?
+- **Flowchart Logic**: Learns by repeatedly asking binary questions ("Is feature X > threshold?") to partition the data into rectangular regions.
+- **Natural handling of features**: It doesn't require scaling and handles non-linear relationships and feature interactions automatically.
+
+### Why Scaling is NOT required?
+- **Rank-Based Splitting**: Decision trees only care about the *order* of values, not their magnitude. A split point is chosen based on how well it separates classes, regardless of whether the feature is scaled or not.
+
+### Hyperparameter Tuning: Depth Selection
+- **Overfitting Warning**: Unconstrained trees (max_depth=None) grow until every leaf is pure, often reaching 100% training accuracy but failing on new data.
+- **Tuning**: We used `GridSearchCV` to find the optimal `max_depth`.
+
+### Results
+
+| Metric | Baseline Tree (None) | Tuned Tree (Best K) |
+| :--- | :--- | :--- |
+| **Train Accuracy** | 1.0000 | 1.0000 |
+| **Test Accuracy** | 0.5000 | 1.0000 |
+| **Train-Test Gap** | 0.5000 | 0.0000 (Fixed!) |
+| **Optimal Depth** | - | 1 |
+
+### Interpretation
+- **Small K/Depth**: Prevents the model from creating "over-specific" rules that only apply to the training set.
+- **Feature Importance**: The tree identified specific keywords (like "Python" or "Analyze") as the primary drivers for splitting the project descriptions.
+
+### Final Insight
+- **Decision Trees are foundation blocks** for more powerful algorithms like Random Forest and Gradient Boosting. Understanding how to prune a single tree is essential for mastering these ensembles.
+
+---
+
+## Video Answers: Decision Tree Diagnostics
+
+### Q: Scenario Model A (max_depth=None) vs Model B (max_depth=5)
+#### 1. Which model exhibits high variance? Why?
+**👉 Model A.** It has a 31% train-test gap (100% vs 69%) and high CV standard deviation. This indicates it is highly sensitive to the specific training samples it saw, and its performance swings wildly on different data folds.
+
+#### 2. Why does limiting depth improve test accuracy?
+By restricting the depth, we prevent the model from creating "micro-rules" that fit noise or outliers. It forces the tree to use only the most statistically significant features that are likely to appear in the test set as well.
+
+#### 3. What does the reduction in CV standard deviation indicate?
+It indicates **Stability**. A low standard deviation means the model performs consistently across all 5 folds of the data, which is a strong indicator of good generalization and low variance.
+
+#### 4. If the dataset size doubled, which model would benefit more and why?
+**👉 Model A would benefit more.** High-variance models suffer from a lack of enough data to fill their high capacity. With more data, the tree can find more "true" complex patterns rather than memorizing noise, eventually narrowing the train-test gap.
+
+---
+
 ## Video Answers: Accuracy & Reliability
 
 ### Q1: Why is baseline accuracy misleading?
