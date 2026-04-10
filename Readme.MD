@@ -638,6 +638,51 @@ The dataset is imbalanced. If 85% of projects are 'Python', a model that just sa
 
 ---
 
+## F1 Score Evaluation
+
+### What is F1 Score?
+F1 is the **harmonic mean** of Precision and Recall. Unlike a simple average, the harmonic mean is very sensitive to low values; if either Precision or Recall is zero, the F1 score becomes zero.
+
+### Why F1 is Important?
+- **Accuracy Fails**: In imbalanced data, accuracy can look great while the model is actually failing.
+- **Balanced Performance**: F1 ensures that the model is performing well on *both* catching all positive cases and ensuring those cases are truly positive.
+
+### Results
+**Baseline:**
+- **F1-Score**: 0.00 (In most imbalanced real-world distributions where majority is negative)
+
+**Model:**
+- **F1-Score**: 0.67
+
+### Interpretation
+- **Model Improvement**: Our Logistic Regression model achieved a significantly higher F1-score than the baseline, proving it has learned to identify skills with a solid balance of precision and recall.
+- **Harmonic Penalty**: Since our F1 is 0.67, it confirms that neither precision nor recall dropped to an unacceptable level.
+
+### Key Insight
+- **F1 Punishes Imbalance**: You cannot have a high F1-score if you have a "Recall of 1.0 but Precision of 0.01".
+- **High F1 = Good Model**: A high F1-score is often the strongest single indicator that your classification model is reliable and ready for deployment.
+
+---
+
+## Video Answer: Precision, Recall, and the F1-Balance
+
+### Scenario: Disease Detection
+- **FN (False Negative)**: Missing a sick person. (Dangerous! The patient remains untreated).
+- **FP (False Positive)**: Telling a healthy person they are sick. (Manageable. They undergo further testing).
+
+#### Answer:
+**👉 PRIORITIZE RECALL.**
+In healthcare, we must minimize False Negatives at all costs to save lives. However, we cannot ignore the cost of False Positives entirely (as it strains hospital resources).
+
+**👉 USE F1 TO BALANCE.**
+While Recall is the priority, the **F1-Score** is the ultimate metric we use to ensure our "high recall" model isn't just flagging every single patient as "sick" to get a perfect score. F1 forces us to maintain a respectable level of Precision as well.
+
+### Threshold Effect on F1
+- **Lower Threshold**: Increases Recall but usually drops Precision. This will affect the F1-score positively for a while, but if the threshold is *too* low, the heavy drop in Precision will eventually cause the F1-score to crash.
+- **Optimal Threshold**: There is a "sweet spot" (often found via a Precision-Recall Curve) where the F1-score is maximized, representing the perfect operational balance for the model.
+
+---
+
 ## Video Answers: Accuracy & Reliability
 
 ### Q1: Why is baseline accuracy misleading?
