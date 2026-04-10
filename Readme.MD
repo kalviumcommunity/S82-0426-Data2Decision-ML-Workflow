@@ -345,4 +345,52 @@ The dataset is imbalanced. If 85% of projects are 'Python', a model that just sa
 **Recall and F1 Score.** In multi-label skill prediction, we care more about finding all the relevant skills (Recall) than just being generally right about the majority class.
 
 **👉 If accuracy is 89% but recall is 0.05?**
-**❌ BAD MODEL.** This model is essentially a "fancy baseline." It's hiding its failure to detect important minority classes behind a high accuracy number. It would fail in a real-world scenario where those minority skills are critical.
+**❌ BAD MODEL.** This model is essentially a "fancy baseline." It hide its failure to detect important minority classes behind a high accuracy number. It would fail in a real-world scenario where those minority skills are critical.
+
+---
+
+## Linear Regression Model
+
+### Baseline
+- **DummyRegressor**: Used the `mean` strategy. 
+- **Significance**: Represents a naive prediction where we always guess the average value of the target variable.
+
+### Model
+- **Linear Regression**: A standard statistical model that learns the linear relationship between features and a continuous target.
+- **Pipeline Implementation**: Integrated `StandardScaler` to ensure features are on a consistent scale before reaching the regressor.
+
+### Results
+- **Baseline RMSE**: 130.91
+- **Model RMSE**: 15.11
+- **Improvement**: +115.80 (Significant error reduction)
+- **R² Score**: 0.986 (Excellent fit)
+
+### Interpretation
+**R² (Coefficient of Determination) Meaning**:
+- **0** → The model is only as good as the baseline (guessing the mean).
+- **> 0** → The model has learned structural patterns and improved over the mean.
+- **< 0** → The model is actually worse than just guessing the mean.
+
+### Key Insights
+- The model shows massive improvement over the baseline, justifying its complexity.
+- A high R² score suggests the synthetic data has a strong linear bias that the model captured.
+- Metrics like RMSE provide a concrete idea of the "average error" in the target's specific units.
+
+---
+
+## Video Answer: Regression Evaluation
+
+### Q1: Is the model better?
+**👉 Yes**. We can confirm this because the **RMSE** and **MAE** decreased significantly, while the **R² Score** increased from zero to nearly 1.0.
+
+### Q2: What if R² = 0.11?
+**👉 This suggests a weak model.** It means the features only explain 11% of the variation in the target. 89% of the behavior is "noise" or unexplained by the current features.
+
+### Q3: What if CV results vary widely?
+**👉 The model is unstable.** This indicates poor generalization—the model might be overfitting to specific chunks of data and would likely fail on brand-new data.
+
+### Q4: What if residuals increase with the target value?
+**👉 Heteroscedasticity**. This means one of the core assumptions of Linear Regression (constant variance of error) is violated. The model is less reliable for higher values of the target.
+
+### Q5: Should we deploy a model with R²=0.11 and high variance?
+**👉 ❌ No.** A model that is both weak and unstable is dangerous for production. It offers little predictive power and high risk of unexpected behavior.
