@@ -1,47 +1,52 @@
-import os
-import sys
-
-# Ensure the 'src' directory is in the path if running from the root
-sys.path.append(os.path.join(os.path.dirname(__file__)))
-
-from data_loader import load_data
-from preprocessing import preprocess_data
-from model import train_model
-from evaluate import evaluate_model
+from src.data_loader import load_data
+from src.data_preprocessing import preprocess_data
+from src.train import train_model
+from src.evaluate import evaluate_model
+from src.predict import predict
+from src.config import DATA_PATH, TARGET_COLUMN
 
 def run_pipeline():
     """
-    Orchestrates the full Machine Learning pipeline:
-    1. Loads data from the data directory.
-    2. Preprocesses the data (splitting into train/test).
-    3. Trains a Logistic Regression model.
-    4. Evaluates the model and prints the accuracy.
+    Main orchestration function to run the ML pipeline.
     """
-    # Define paths (relative to the project root/main.py execution)
-    # Since we run from root as 'python src/main.py', the relative path to data is 'data/data.csv'
-    data_path = os.path.join(os.path.dirname(__file__), '..', 'data', 'data.csv')
-    target_column = 'passed'
+    print("\n" + "="*40)
+    print("🚀 STARTING PROFESSIONAL ML PIPELINE")
+    print("="*40)
 
-    print("--- Starting ML Pipeline ---")
+    # 1. DATA LOADING
+    print(f"\n[1/5] Loading data from: {DATA_PATH}")
+    df = load_data(DATA_PATH)
 
-    # 1. Load Data
-    print(f"Loading data from: {data_path}")
-    df = load_data(data_path)
+    # 2. DATA PREPROCESSING
+    print("[2/5] Splitting data into train/test sets...")
+    X_train, X_test, y_train, y_test = preprocess_data(df, TARGET_COLUMN)
 
-    # 2. Preprocess Data
-    print("Preprocessing data...")
-    X_train, X_test, y_train, y_test = preprocess_data(df, target_column)
+    # 3. MODEL TRAINING
+    print("[3/5] training model...")
+    model = train_model(X_train, y_train)
 
-    # 3. Train Model
-    print("Training model...")
-    trained_model = train_model(X_train, y_train)
+    # 4. MODEL EVALUATION
+    print("[4/5] Evaluating model performance...")
+    accuracy = evaluate_model(model, X_test, y_test)
+    print(f"📊 Final Model Accuracy: {accuracy:.2f}")
 
-    # 4. Evaluate Model
-    print("Evaluating model...")
-    accuracy = evaluate_model(trained_model, X_test, y_test)
+    # 5. INFERENCE (Isolated Prediction)
+    print("\n[5/5] Testing Isolated Prediction...")
+    # Sample dictionary matches config.FEATURES
+    sample_input = {
+        "study_hours": 8,
+        "attendance": 85
+    }
+    
+    # We call predict module which loads the saved model
+    result = predict(sample_input)
+    status = "SUCCESS" if result == 1 else "FAIL"
+    print(f"🔮 Input Sample: {sample_input}")
+    print(f"🎯 Prediction result: {status} (Raw: {result})")
 
-    print(f"\nFinal Model Accuracy: {accuracy:.2f}")
-    print("--- Pipeline Completed Successfully ---")
+    print("\n" + "="*40)
+    print("🏁 PIPELINE COMPLETED SUCCESSFULLY")
+    print("="*40 + "\n")
 
 if __name__ == "__main__":
     run_pipeline()

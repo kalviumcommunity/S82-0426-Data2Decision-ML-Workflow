@@ -3,18 +3,20 @@ from typing import Protocol
 
 def load_data(path: str) -> pd.DataFrame:
     """
-    Loads a dataset from a given CSV file path using pandas.
-
+    Loads raw dataset from a CSV file.
+    
     Parameters:
-    path (str): The absolute or relative path to the CSV file.
-
+    path (str): Path to the CSV file.
+    
     Returns:
-    pd.DataFrame: A pandas DataFrame containing the loaded data.
+    pd.DataFrame: Loaded data.
     """
     try:
         df = pd.read_csv(path)
+        if df.empty:
+            raise ValueError(f"Dataset at {path} is empty.")
         return df
     except FileNotFoundError:
-        raise FileNotFoundError(f"The file at {path} was not found.")
+        raise FileNotFoundError(f"Data file not found at: {path}")
     except Exception as e:
-        raise Exception(f"An error occurred while loading data: {e}")
+        raise Exception(f"Unexpected error loading data: {e}")
