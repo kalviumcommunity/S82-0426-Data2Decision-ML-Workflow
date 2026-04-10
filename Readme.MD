@@ -259,6 +259,59 @@ A Machine Learning model must only learn from information that would be availabl
 - **No high-cardinality categorical features** to handle.
 - **Text handled separately** using a dedicated NLP pipeline.
 
+
+---
+
+## Model Evaluation using MAE
+
+### What is MAE?
+- **Mean Absolute Error**: It represents the average magnitude of the errors in a set of predictions, without considering their direction.
+- **Unit Consistent**: It is measured in the exact same units as the target variable, making it highly intuitive for stakeholders.
+
+### Results
+- **Baseline MAE**: 105.11
+- **Model MAE**: 15.65
+- **Improvement**: 85.11% reduction in average error.
+
+### Interpretation
+- Model predictions improved by **89.46 units** on average compared to a naive mean-predictor.
+- The MAE of 15.65 shows the "real-world" average mistake the model makes when estimating the continuous target.
+
+### RMSE Insight
+- **RMSE** is invariably higher than MAE (usually around ~20 in this demo).
+- This indicates that while the average error is low, there are some "larger" outliers in the predictions that the squared-error penalty of RMSE is highlighting.
+
+### R² Insight
+- **R² Score (0.98)**: Indicates that 98% of the target's variance is successfully explained by our features.
+
+### Cross Validation
+- **Mean MAE**: 16.35 ± 0.94
+- **Stability**: The low standard deviation (0.94) across 5 folds proves the model is stable and not sensitive to specific data splits.
+
+### Key Learning
+- **Intuition**: MAE is the easiest metric to explain to non-technical users.
+- **Context**: An MAE of 15 means nothing without the baseline context (105).
+- **Holistic View**: Never rely on a single metric; use R² for variance and RMSE for outlier sensitivity.
+
+---
+
+## Video Answer: Advanced Evaluation Nuances
+
+### Q1: Is the model better?
+**👉 YES.** The reduction in MAE from 105 to 15 is a definitive proof of learning.
+
+### Q2: Why is RMSE always higher?
+**👉 RMSE penalizes outliers.** Because RMSE squares the errors before averaging them, even a few large mistakes will pull the RMSE far above the MAE.
+
+### Q3: What if R² = 0.12?
+**👉 Weak Model.** It means the model is barely doing better than a random guess. Only 12% of the story is being told by your variables.
+
+### Q4: What if CV variation is high?
+**👉 Model Unstable.** If the MAE jumps from 10 to 50 across different folds, your model is likely overfitting or the data is too small/noisy to generalize.
+
+### Q5: Is only MAE enough?
+**👉 ❌ NO.** MAE tells you the average error, but R² tells you the trend, and RMSE tells you about the risk of large failure. You need all three for a complete picture.
+
 ---
 
 ### Key Insight
@@ -345,4 +398,52 @@ The dataset is imbalanced. If 85% of projects are 'Python', a model that just sa
 **Recall and F1 Score.** In multi-label skill prediction, we care more about finding all the relevant skills (Recall) than just being generally right about the majority class.
 
 **👉 If accuracy is 89% but recall is 0.05?**
-**❌ BAD MODEL.** This model is essentially a "fancy baseline." It's hiding its failure to detect important minority classes behind a high accuracy number. It would fail in a real-world scenario where those minority skills are critical.
+**❌ BAD MODEL.** This model is essentially a "fancy baseline." It hide its failure to detect important minority classes behind a high accuracy number. It would fail in a real-world scenario where those minority skills are critical.
+
+---
+
+## Linear Regression Model
+
+### Baseline
+- **DummyRegressor**: Used the `mean` strategy. 
+- **Significance**: Represents a naive prediction where we always guess the average value of the target variable.
+
+### Model
+- **Linear Regression**: A standard statistical model that learns the linear relationship between features and a continuous target.
+- **Pipeline Implementation**: Integrated `StandardScaler` to ensure features are on a consistent scale before reaching the regressor.
+
+### Results
+- **Baseline RMSE**: 130.91
+- **Model RMSE**: 15.11
+- **Improvement**: +115.80 (Significant error reduction)
+- **R² Score**: 0.986 (Excellent fit)
+
+### Interpretation
+**R² (Coefficient of Determination) Meaning**:
+- **0** → The model is only as good as the baseline (guessing the mean).
+- **> 0** → The model has learned structural patterns and improved over the mean.
+- **< 0** → The model is actually worse than just guessing the mean.
+
+### Key Insights
+- The model shows massive improvement over the baseline, justifying its complexity.
+- A high R² score suggests the synthetic data has a strong linear bias that the model captured.
+- Metrics like RMSE provide a concrete idea of the "average error" in the target's specific units.
+
+---
+
+## Video Answer: Regression Evaluation
+
+### Q1: Is the model better?
+**👉 Yes**. We can confirm this because the **RMSE** and **MAE** decreased significantly, while the **R² Score** increased from zero to nearly 1.0.
+
+### Q2: What if R² = 0.11?
+**👉 This suggests a weak model.** It means the features only explain 11% of the variation in the target. 89% of the behavior is "noise" or unexplained by the current features.
+
+### Q3: What if CV results vary widely?
+**👉 The model is unstable.** This indicates poor generalization—the model might be overfitting to specific chunks of data and would likely fail on brand-new data.
+
+### Q4: What if residuals increase with the target value?
+**👉 Heteroscedasticity**. This means one of the core assumptions of Linear Regression (constant variance of error) is violated. The model is less reliable for higher values of the target.
+
+### Q5: Should we deploy a model with R²=0.11 and high variance?
+**👉 ❌ No.** A model that is both weak and unstable is dangerous for production. It offers little predictive power and high risk of unexpected behavior.
