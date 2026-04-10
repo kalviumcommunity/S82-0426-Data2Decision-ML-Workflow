@@ -131,3 +131,30 @@ This repository includes an additional module, `src/problem_type_analysis.py`, w
 - **Synthetic Data**: Uses `sklearn.datasets` to generate reproducible examples.
 - **Model Evaluation**: Demonstrates essential metrics like F1-Score for classification and R² for regression.
 - **Independent Module**: This analysis runs separately from the core NLP pipeline via `python src/problem_type_analysis.py`.
+
+---
+
+## Feature and Target Definition
+
+### Target Variable
+- **Column**: `skills` (Conceptual set represented by `Python`, `SQL`, `React`, `Machine_Learning`, `Flask`)
+- **Type**: Multi-label classification
+- **Meaning**: Technologies and skills detected within the project description.
+
+### Features
+- **project_description**: The primary text input (cleaned GitHub project descriptions).
+
+### Excluded Columns
+- **project_id** → unique identifier (removed to prevent the model from memorizing specific projects).
+- **manual_tags** → leakage prevention (removed because it contains human-labeled skill tags that wouldn't be available during inference).
+
+### Problem Type
+- **Multi-label classification**: Each project can be associated with multiple skills simultaneously.
+
+### Evaluation Metrics
+- **F1 score (primary)**: Balances Precision and Recall for multi-label tasks.
+- **Precision / Recall**: Essential for understanding the trade-off between skill detection accuracy and coverage.
+
+### Leakage Prevention
+- **Only input text used**: Features are derived strictly from the `project_description`.
+- **No post-output features**: Any columns created after or alongside the skill tags (like `manual_tags`) are strictly excluded during training.
