@@ -683,6 +683,60 @@ While Recall is the priority, the **F1-Score** is the ultimate metric we use to 
 
 ---
 
+## Confusion Matrix Analysis
+
+### What is Confusion Matrix?
+A Confusion Matrix is a tabular summary of the number of correct and incorrect predictions made by a classifier. It shows Exactly how the model is being "confused."
+
+### Results
+**Model:**
+- **TP (True Positive)**: 1 (Correctly identified the skill)
+- **FP (False Positive)**: 1 (False Alarm; predicted the skill when it wasn't there)
+- **FN (False Negative)**: 0 (No missed cases!)
+- **TN (True Negative)**: 0 (Missing negative detection)
+
+**Baseline:**
+- **TP**: 1
+- **FN**: 0 (Similar to model here due to majority class guessing)
+
+### Key Observations
+- **False Negative (FN)**: Indicates missed projects. In our project, an FN means a project didn't get assigned a critical skill it needed.
+- **False Positive (FP)**: Indicates false alarms. An FP means the model claimed a project had a skill that wasn't actually mentioned.
+
+### Critical Error
+**👉 False Negative (FN) is more dangerous.**
+In a project analyzer, it is worse to *miss* a valid skill (the project goes unstaffed or miscategorized) than to *guess* an extra one (which can be easily caught during human review).
+
+### Improvement
+- The model maintains zero False Negatives compared to a naive guesser but provides probability-based insights that a baseline cannot.
+
+### Threshold Impact
+- **Lower threshold**: FN decreases (catch more), but FP increases (more false alarms).
+- **Higher threshold**: FN increases (miss more), but FP decreases (be more certain).
+
+---
+
+## Video Answer: Fraud Detection Logic
+
+### Scenario: Fraud Detection
+- **FN Cost**: ₹40,000 (We lose the money permanently).
+- **FP Cost**: ₹1,000 (We spend a small amount to verify the user).
+
+#### Answer:
+**👉 Minimize FN.**
+The loss from a single "missed" fraud is 40x higher than a single "false alarm."
+
+#### Threshold:
+**👉 Lower the threshold.**
+We want the model to be "highly suspicious." Even at a 10% or 20% probability of fraud, we should flag the transaction.
+
+#### Effect on Matrix:
+- **TP ↑**: We correctly catch more thieves.
+- **FN ↓**: We miss far fewer thieves (saving ₹40k each).
+- **FP ↑**: We flag more innocent people (costing ₹1k each), but the trade-off is mathematically justified.
+
+---
+
 ## Video Answers: Accuracy & Reliability
 
 ### Q1: Why is baseline accuracy misleading?
