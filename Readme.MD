@@ -187,3 +187,33 @@ This repository includes an additional module, `src/problem_type_analysis.py`, w
 ### Leakage Prevention
 - **Only input text used**: All analysis is derived strictly from the `project_description`.
 - **No future information included**: `manual_tags` and `project_id` are completely ignored during distribution analysis.
+
+---
+
+## Data Splitting Strategy
+
+- **Dataset Split**: 80% training and 20% testing
+- **Method**: Random split used (not time-based)
+- **Reproducibility**: `random_state=42` used for consistent results
+- **Multi-label Handling**: Stratification was not used due to the complex nature of multi-label tag combinations.
+- **Leakage Prevention**: No preprocessing (cleaning, TF-IDF, or feature engineering) was applied before the split.
+- **Test Set Integrity**: The test set was kept entirely untouched during the training phase to ensure a fair evaluation of model performance.
+
+---
+
+## Data Leakage Demonstration
+
+### Leakage Type
+Train-Test Contamination (via Feature Scaling)
+
+### What Was Done Wrong
+In the contamination scenario, `StandardScaler` was fitted and transformed on the **entire dataset** before performing the train-test split. This allowed the training process to "see" the mean and variance of the test data, leading to statistical contamination.
+
+### Impact
+Numerical leakage causes the model to have an unfair advantage, often resulting in **artificially high or deceptive accuracy** that will not persist when the model encounters real-world data from a different distribution.
+
+### Fix
+The correct workflow is to **Split first**, then fit the scaler ONLY on the training data. The test data should then be transformed using the statistics (mean/std) learned strictly from the training set.
+
+### Key Learning
+A Machine Learning model must only learn from information that would be available at prediction time. Any "look-ahead" into the test set's distribution violates the core principle of objective evaluation.
