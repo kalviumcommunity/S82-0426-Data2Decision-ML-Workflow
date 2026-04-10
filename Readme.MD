@@ -187,3 +187,14 @@ This repository includes an additional module, `src/problem_type_analysis.py`, w
 ### Leakage Prevention
 - **Only input text used**: All analysis is derived strictly from the `project_description`.
 - **No future information included**: `manual_tags` and `project_id` are completely ignored during distribution analysis.
+
+---
+
+## Data Splitting Strategy
+
+- **Dataset Split**: 80% training and 20% testing
+- **Method**: Random split used (not time-based)
+- **Reproducibility**: `random_state=42` used for consistent results
+- **Multi-label Handling**: Stratification was not used due to the complex nature of multi-label tag combinations.
+- **Leakage Prevention**: No preprocessing (cleaning, TF-IDF, or feature engineering) was applied before the split.
+- **Test Set Integrity**: The test set was kept entirely untouched during the training phase to ensure a fair evaluation of model performance.
