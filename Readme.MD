@@ -283,3 +283,28 @@ Feature types in this project are defined based on how the model interprets data
 ### Leakage Prevention
 - **Split before Scaling**: The `StandardScaler` is fitted only on the training set.
 - **Transformed Test Set**: The test data is transformed using the mean and standard deviation learned strictly from the training data, preventing information from the future from entering the training process.
+
+---
+
+## Feature Normalization using MinMaxScaler
+
+### In This Project
+- **No numerical features present**: The raw dataset consists of textual descriptions.
+- **Text is transformed using TF-IDF**: The resulting vectors already represent word importances in a normalized comparative scale.
+- **TF-IDF already normalizes values**: Standard TF-IDF implementations in `scikit-learn` use L2 normalization by default.
+
+### Why MinMaxScaler Not Used
+- **NLP features already scaled**: Applying another scaling layer to TF-IDF sparse matrices is redundant.
+- **No distance-based raw numerical features**: Our current Random Forest model is tree-based and does not rely on Euclidean distances.
+
+### Demonstration
+- A separate demonstration (`src/minmax_scaling_demo.py`) shows the effect of squeezing features into a **range of [0, 1]**.
+- **Result**: Verification of `min=0.0000` and `max=1.0000` on the training set, ensuring correct boundary implementation.
+
+### Leakage Prevention
+- **Split before Scaling**: Scaling parameters were learned strictly from the training set.
+- **Consistent Transformation**: The test set was transformed using the same scaler object without re-fitting.
+
+### When to Use MinMaxScaler
+- **Distance-based models**: k-Nearest Neighbors (kNN), Support Vector Machines (SVM).
+- **Optimization stability**: Artificial Neural Networks (ANN) where consistent activation ranges improve backpropagation.
