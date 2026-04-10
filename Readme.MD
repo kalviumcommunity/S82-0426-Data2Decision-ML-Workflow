@@ -109,3 +109,25 @@ The system uses **TF-IDF Vectorization** to convert project descriptions into nu
 
 ### Intelligent Recommendations
 The `recommend.py` module analyzes detected skills against industry standards to identify gaps and suggest the next stage of portfolio growth.
+
+---
+
+## 📝 Assignment: Supervised Learning Problem Type Analysis
+
+This repository includes an additional module, `src/problem_type_analysis.py`, which explores various Supervised Learning scenarios and provides practical examples of Classification and Regression.
+
+### 🔹 Classification vs. Regression
+- **Classification**: Predicts discrete categories or labels (e.g., "Fraud" or "Not Fraud").
+- **Regression**: Predicts continuous numerical values (e.g., House Prices or Temperature).
+
+### 🔹 Scenario Analysis Summary
+1.  **Fraud Detection**: Binary Classification. Accuracy is often misleading due to imbalanced data; Recall and Precision are prioritized.
+2.  **House Price Prediction**: Regression. Success is measured by how close predictions are to actual prices (MAE, RMSE).
+3.  **Movie Genre Tagging**: Multi-Label Classification. Films often span multiple genres simultaneously.
+4.  **Product Demand Prediction**: Regression. Forecasts quantity to optimize inventory.
+5.  **Disease Classification**: Multi-Class Classification. Categorizes symptoms into distinct medical diagnoses.
+
+### 🔹 Implementation Highlights
+- **Synthetic Data**: Uses `sklearn.datasets` to generate reproducible examples.
+- **Model Evaluation**: Demonstrates essential metrics like F1-Score for classification and R² for regression.
+- **Independent Module**: This analysis runs separately from the core NLP pipeline via `python src/problem_type_analysis.py`.
