@@ -4,15 +4,15 @@ from sklearn.linear_model import LogisticRegression
 
 def evaluate_model(model: LogisticRegression, X_test: pd.DataFrame, y_test: pd.Series) -> float:
     """
-    Evaluates the model on the test data and returns the accuracy score.
-
+    Evaluates a trained model using test data.
+    
     Parameters:
-    model (LogisticRegression): The trained model object.
-    X_test (pd.DataFrame): The test features.
-    y_test (pd.Series): The test target.
-
+    model (LogisticRegression): Trained model object.
+    X_test (pd.DataFrame): Test features.
+    y_test (pd.Series): Test target.
+    
     Returns:
-    float: The accuracy score as a decimal between 0 and 1.
+    float: Accuracy score.
     """
     y_pred = model.predict(X_test)
     accuracy = accuracy_score(y_test, y_pred)
