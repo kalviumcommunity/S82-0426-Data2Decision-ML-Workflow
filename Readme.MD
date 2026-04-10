@@ -829,6 +829,54 @@ A stable cross-validation score (low standard deviation) indicates that the mode
 
 ---
 
+## Decision Tree Model
+
+### What is a Decision Tree?
+- **Flowchart Logic**: Learns by repeatedly asking binary questions ("Is feature X > threshold?") to partition the data into rectangular regions.
+- **Natural handling of features**: It doesn't require scaling and handles non-linear relationships and feature interactions automatically.
+
+### Why Scaling is NOT required?
+- **Rank-Based Splitting**: Decision trees only care about the *order* of values, not their magnitude. A split point is chosen based on how well it separates classes, regardless of whether the feature is scaled or not.
+
+### Hyperparameter Tuning: Depth Selection
+- **Overfitting Warning**: Unconstrained trees (max_depth=None) grow until every leaf is pure, often reaching 100% training accuracy but failing on new data.
+- **Tuning**: We used `GridSearchCV` to find the optimal `max_depth`.
+
+### Results
+
+| Metric | Baseline Tree (None) | Tuned Tree (Best K) |
+| :--- | :--- | :--- |
+| **Train Accuracy** | 1.0000 | 1.0000 |
+| **Test Accuracy** | 0.5000 | 1.0000 |
+| **Train-Test Gap** | 0.5000 | 0.0000 (Fixed!) |
+| **Optimal Depth** | - | 1 |
+
+### Interpretation
+- **Small K/Depth**: Prevents the model from creating "over-specific" rules that only apply to the training set.
+- **Feature Importance**: The tree identified specific keywords (like "Python" or "Analyze") as the primary drivers for splitting the project descriptions.
+
+### Final Insight
+- **Decision Trees are foundation blocks** for more powerful algorithms like Random Forest and Gradient Boosting. Understanding how to prune a single tree is essential for mastering these ensembles.
+
+---
+
+## Video Answers: Decision Tree Diagnostics
+
+### Q: Scenario Model A (max_depth=None) vs Model B (max_depth=5)
+#### 1. Which model exhibits high variance? Why?
+**👉 Model A.** It has a 31% train-test gap (100% vs 69%) and high CV standard deviation. This indicates it is highly sensitive to the specific training samples it saw, and its performance swings wildly on different data folds.
+
+#### 2. Why does limiting depth improve test accuracy?
+By restricting the depth, we prevent the model from creating "micro-rules" that fit noise or outliers. It forces the tree to use only the most statistically significant features that are likely to appear in the test set as well.
+
+#### 3. What does the reduction in CV standard deviation indicate?
+It indicates **Stability**. A low standard deviation means the model performs consistently across all 5 folds of the data, which is a strong indicator of good generalization and low variance.
+
+#### 4. If the dataset size doubled, which model would benefit more and why?
+**👉 Model A would benefit more.** High-variance models suffer from a lack of enough data to fill their high capacity. With more data, the tree can find more "true" complex patterns rather than memorizing noise, eventually narrowing the train-test gap.
+
+---
+
 ## Video Answers: Accuracy & Reliability
 
 ### Q1: Why is baseline accuracy misleading?
@@ -845,3 +893,62 @@ A stable cross-validation score (low standard deviation) indicates that the mode
 
 ### Q5: Should we deploy based only on Accuracy?
 **👉 ❌ No.** Accuracy is a "shallow" metric. Without checking stability (Cross-validation) and error types (Confusion Matrix), you risk deploying a model that fails completely in the real world.
+
+---
+
+## Feature Importance Analysis
+
+### Model Performance
+- **Train Accuracy**: 1.0000
+- **Test Accuracy**: 0.5000
+- **CV Score**: 0.7778 ± 0.15
+
+### MDI Importance
+**Top Features:**
+- `analyze` (0.16)
+- `python` (0.15)
+- `projects` (0.05)
+
+**Low Importance:**
+- `with` (0.00)
+
+### Correlation Analysis
+- **`analyze` & `python`** show moderate correlation (0.45).
+- **👉 Impact**: Highly correlated features can split the "importance score" between them in MDI, making both look less important than they actually are.
+
+### Permutation Importance
+**Top Features:**
+- `analyze` (0.15)
+- `python` (0.15)
+- `using` (0.05)
+
+### Comparison
+- **Consistency**: Both methods agree that "analyze" and "python" are core predictors.
+- **Bias Alert**: MDI tends to favor "noisy" features that allow for easy splitting in the training set (high cardinal features), whereas Permutation importance focuses on what actually helps predict the *test* set.
+
+### Key Insight
+- **MDI** is biased for high-cardinality features and can be misleading if the model is overfitting.
+- **Permutation Importance** is more reliable as it directly measures the drop in accuracy when a feature's information is destroyed.
+
+### Feature Removal
+- **Action**: Removed low-importance feature `with`.
+- **Accuracy Change**: +0.0000 (Model performance remained stable, proving the feature was redundant).
+
+### Conclusion
+Permutation importance is the gold standard for real-world decision-making as it prioritizes generalization over training-set memorization.
+
+---
+
+## Video Answers: Feature Importance Deep Dive
+
+### Q: Why is CustomerID high in MDI but 0 in permutation?
+**👉 Answer:**
+- **High-Cardinality Bias**: Each CustomerID is unique. A Decision Tree can use these unique IDs to create perfect splits that isolate individual training samples (Memorization). This leads to a massive reduction in impurity (High MDI). 
+- **Overfitting**: However, CustomerID has zero relation to the actual project skills.
+- **Not useful for generalization**: When you permute (shuffle) CustomerID in the test set, the model's accuracy doesn't drop because a *new* CustomerID in the test set doesn't exist in the training rules anyway.
+
+### Should we remove CustomerID?
+**👉 YES.** It is a non-predictive feature that increases model complexity and risks "leakage" if the IDs are sequentially assigned.
+
+### Which method is better for feature selection?
+**👉 Permutation importance.** It protects you from the cardinality bias of MDI and ensures you only keep features that have a measurable impact on unseen data.
