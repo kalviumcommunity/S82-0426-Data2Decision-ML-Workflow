@@ -586,6 +586,58 @@ The dataset is imbalanced. If 85% of projects are 'Python', a model that just sa
 
 ---
 
+## Precision & Recall Evaluation
+
+### What is Precision?
+- **Precision**: Of all the projects the model *predicted* had the skill, how many *actually* had it? It's a measure of quality (avoiding False Alarms).
+
+### What is Recall?
+- **Recall**: Of all the projects that *actually* had the skill, how many did the model manage to *find*? It's a measure of quantity (avoiding Missed Cases).
+
+### Results
+**Baseline:**
+- **Precision**: 0.00 (Usually 0 if majority is negative, or matches majority frequency)
+- **Recall**: 0.00 (Usually 0 if majority is negative)
+
+**Model:**
+- **Precision**: 0.50
+- **Recall**: 1.00
+
+### Confusion Matrix Insight
+- **True Positives (TP)**: Correctly detected the skill (e.g., Python).
+- **False Positives (FP)**: False alarm (predicted a skill where none existed).
+- **False Negatives (FN)**: Missed case (the skill existed but the model missed it).
+
+### Trade-off
+- **Increasing Precision**: Reduces False Positives but usually leads to more False Negatives (Missed Cases).
+- **Increasing Recall**: Reduces False Negatives but usually leads to more False Positives (False Alarms).
+
+### Key Insight
+- Accuracy is misleading in imbalanced data because it hides the Recall failure for minority classes.
+- Precision & Recall together show the true operational performance of the model.
+
+---
+
+## Video Answer: The Cost of Mistakes
+
+### Q: Fraud Detection Case Study
+- **FN Cost (Missing Fraud)**: ₹50,000
+- **FP Cost (False Alarm)**: ₹1,000
+
+#### Answer:
+**👉 PRIORITIZE RECALL.**
+
+**Because:**
+- Missing a fraudulent transaction (False Negative) results in a massive loss of ₹50,000.
+- A False Alarm (False Positive) only costs ₹1,000 to investigate (e.g., a simple phone call to the customer).
+- We would much rather investigate 50 innocent customers than miss one thief. High Recall ensures we catch as much fraud as possible, even at the cost of some additional investigations.
+
+### Threshold Explanation
+- **Lower Threshold (e.g., 0.2)**: Boosts **Recall**. The model becomes "braver" and flags anything suspicious.
+- **Higher Threshold (e.g., 0.8)**: Boosts **Precision**. The model becomes "cautious" and only flags when it is absolutely certain.
+
+---
+
 ## Video Answers: Accuracy & Reliability
 
 ### Q1: Why is baseline accuracy misleading?
