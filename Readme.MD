@@ -893,3 +893,62 @@ It indicates **Stability**. A low standard deviation means the model performs co
 
 ### Q5: Should we deploy based only on Accuracy?
 **👉 ❌ No.** Accuracy is a "shallow" metric. Without checking stability (Cross-validation) and error types (Confusion Matrix), you risk deploying a model that fails completely in the real world.
+
+---
+
+## Feature Importance Analysis
+
+### Model Performance
+- **Train Accuracy**: 1.0000
+- **Test Accuracy**: 0.5000
+- **CV Score**: 0.7778 ± 0.15
+
+### MDI Importance
+**Top Features:**
+- `analyze` (0.16)
+- `python` (0.15)
+- `projects` (0.05)
+
+**Low Importance:**
+- `with` (0.00)
+
+### Correlation Analysis
+- **`analyze` & `python`** show moderate correlation (0.45).
+- **👉 Impact**: Highly correlated features can split the "importance score" between them in MDI, making both look less important than they actually are.
+
+### Permutation Importance
+**Top Features:**
+- `analyze` (0.15)
+- `python` (0.15)
+- `using` (0.05)
+
+### Comparison
+- **Consistency**: Both methods agree that "analyze" and "python" are core predictors.
+- **Bias Alert**: MDI tends to favor "noisy" features that allow for easy splitting in the training set (high cardinal features), whereas Permutation importance focuses on what actually helps predict the *test* set.
+
+### Key Insight
+- **MDI** is biased for high-cardinality features and can be misleading if the model is overfitting.
+- **Permutation Importance** is more reliable as it directly measures the drop in accuracy when a feature's information is destroyed.
+
+### Feature Removal
+- **Action**: Removed low-importance feature `with`.
+- **Accuracy Change**: +0.0000 (Model performance remained stable, proving the feature was redundant).
+
+### Conclusion
+Permutation importance is the gold standard for real-world decision-making as it prioritizes generalization over training-set memorization.
+
+---
+
+## Video Answers: Feature Importance Deep Dive
+
+### Q: Why is CustomerID high in MDI but 0 in permutation?
+**👉 Answer:**
+- **High-Cardinality Bias**: Each CustomerID is unique. A Decision Tree can use these unique IDs to create perfect splits that isolate individual training samples (Memorization). This leads to a massive reduction in impurity (High MDI). 
+- **Overfitting**: However, CustomerID has zero relation to the actual project skills.
+- **Not useful for generalization**: When you permute (shuffle) CustomerID in the test set, the model's accuracy doesn't drop because a *new* CustomerID in the test set doesn't exist in the training rules anyway.
+
+### Should we remove CustomerID?
+**👉 YES.** It is a non-predictive feature that increases model complexity and risks "leakage" if the IDs are sequentially assigned.
+
+### Which method is better for feature selection?
+**👉 Permutation importance.** It protects you from the cardinality bias of MDI and ensures you only keep features that have a measurable impact on unseen data.
