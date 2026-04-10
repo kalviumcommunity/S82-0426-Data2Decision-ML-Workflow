@@ -737,6 +737,55 @@ We want the model to be "highly suspicious." Even at a 10% or 20% probability of
 
 ---
 
+## KNN Model
+
+### What is KNN?
+- **Instance-Based Learning**: Also known as "Lazy Learning," KNN doesn't learn a global model. Instead, it memorizes the training data and finds the "K" most similar records during prediction.
+- **Simplicity**: It makes no assumptions about the data distribution (non-parametric).
+
+### Why scaling?
+- **Distance-Based algorithm**: KNN relies on Euclidean distance (straight-line distance).
+- **Dominance Correction**: Without scaling, features with large numeric ranges would dominate the distance calculation, making features with small ranges (but high importance) effectively invisible to the model.
+
+### Best K
+- **GridSearchCV**: We used cross-validation to test multiple values of K (1 through 20).
+- **Selection**: The K that provided the most stable generalization across different data chunks was selected as the optimal hyperparameter.
+
+### Results
+- **Baseline Accuracy**: 0.5000
+- **KNN Accuracy**: 0.5000 (Small sample limitation)
+- **Best K**: 1 (Selected based on project distribution)
+
+### Interpretation
+- **Small K (e.g., 1)**: Highly sensitive to noise. The model might overfit to individual outliers.
+- **Large K (e.g., 20)**: Smoothes over the logic. The model might underfit and just predict whatever class is more frequent overall.
+
+### Final Insight
+- **KNN is ideal for small, well-separated datasets** but struggles significantly as the number of features increases (high dimensions) or label boundaries become complex and overlapping.
+
+---
+
+## Video Answers: KNN in Production
+
+### Q: Scenario with 60 features and 50,000 samples
+**👉 Problems:**
+- **Curse of Dimensionality**: In 60D space, all points become "distant" from each other, making the "nearest" neighbor less meaningful.
+- **Slow Prediction**: Since KNN is a lazy learner, it must search through 50,000 points *for every single prediction*. This creates massive latency.
+- **Unstable CV**: With high feature count, a small change in training data can wildly shift which neighbors are "nearest."
+
+**👉 Answer:**
+**NOT suitable for production.**
+
+**Why?**
+- **Distance becomes meaningless**: The "closeness" signal is drowned out by the volume of dimensions.
+- **Prediction slow**: The O(N) complexity for every prediction makes it impossible to scale for real-time applications.
+
+**Solution:**
+- **Dimensionality Reduction**: Use PCA to compress 60 features into 5-10 primary components.
+- **Switch Models**: Use Random Forest or Logistic Regression, which learn a compact "formula" during training that allows for near-instant predictions.
+
+---
+
 ## Video Answers: Accuracy & Reliability
 
 ### Q1: Why is baseline accuracy misleading?
