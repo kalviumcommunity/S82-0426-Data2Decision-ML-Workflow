@@ -1,6 +1,10 @@
 # Configuration for Project Description Analyzer (NLP)
 
-DATA_PATH = "data/projects.csv"
+# Data paths
+RAW_DATA_PATH = "data/raw/projects.csv"
+PROCESSED_DATA_PATH = "data/processed/"
+DATA_PATH = RAW_DATA_PATH  # Main path used by data_loader
+
 MODEL_PATH = "models/skill_classifier.pkl"
 VECTORIZER_PATH = "models/tfidf_vectorizer.pkl"
 
