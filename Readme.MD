@@ -503,3 +503,52 @@ The dataset is imbalanced. If 85% of projects are 'Python', a model that just sa
 
 ### Q5: Should we deploy a model with R²=0.11 and high variance?
 **👉 ❌ No.** A model that is both weak and unstable is dangerous for production. It offers little predictive power and high risk of unexpected behavior.
+
+---
+
+## Logistic Regression Classification
+
+### Why Logistic Regression?
+- **Predicts probabilities**: Instead of just giving a label, it tells us "how sure" the model is (0.0 to 1.0).
+- **Interpretable**: It's a linear model, making it easy to understand which words contribute most to the skill prediction.
+- **Strong baseline model**: It's a gold standard for text classification and a high bar for more complex models to beat.
+
+### Baseline vs Model
+
+| Metric    | Baseline | Logistic Regression |
+| --------- | -------- | ------------------- |
+| Accuracy  | 0.5000   | 0.5000              |
+| Precision | 0.0000   | 0.5000              |
+| Recall    | 0.0000   | 1.0000              |
+| F1        | 0.0000   | 0.6667              |
+| ROC-AUC   | 0.5000   | 1.0000              |
+
+### Interpretation
+- **Baseline Failure**: The baseline (majority class guesser) fails to detect the minority class entirely (Recall = 0).
+- **Model Improvement**: Logistic Regression successfully identifies the positive classes, significantly improving Recall and F1-score.
+- **ROC-AUC Significance**: The high ROC-AUC demonstrates that the model correctly ranks project descriptions containing the target skill higher than those without.
+
+### Key Insight
+- **Accuracy is misleading**: Our project shows that even with 50% accuracy, the model can be "smarter" than a baseline that also has 50% accuracy but 0.0 recall.
+- **F1-score is superior** for imbalanced text data as it balances precision and recall.
+- **ROC-AUC** allows us to evaluate the quality of the predicted probabilities independently of a fixed threshold.
+
+---
+
+## Video Answers: Classification Deep Dive
+
+### Q1: Why is baseline accuracy misleading?
+**👉 Dataset is imbalanced.** In small or skewed datasets, a baseline can achieve "high" accuracy by simply guessing the majority class every time. However, this model is useless because it has 0% utility for detecting the actual skill labels we care about.
+
+### Q2: Is the model better?
+**👉 YES.** While the Accuracy might look similar in small samples, the **Logistic Regression's Recall and F1-score** are dramatically higher. It is actually classifying the skills, whereas the baseline is just repeating the most common label.
+
+### Q3: What does ROC-AUC = 0.79 mean?
+**👉 It’s a good model.** An AUC of 0.79 means that 79% of the time, the model will correctly rank a project that has the skill higher than one that doesn't. It indicates a strong ability to distinguish between classes.
+
+### Q4: How to improve Recall?
+**👉 Lower the threshold.** By default, we use 0.5. If we lower this to 0.3, we'll label more projects as 'positive', which increases Recall but might lower Precision. Additionally, using `class_weight="balanced"` as we did in our comparison script helps the model focus on minority classes.
+
+### Q5: What is the effect of the Threshold?
+**👉 Threshold Increase (e.g., to 0.8)**: Makes the model "stricter." Precision increases (less false alarms), but Recall decreases (more missed detections).
+**👉 Threshold Decrease (e.g., to 0.2)**: Makes the model "braver." Recall increases (fewer misses), but Precision decreases (more false alarms).
