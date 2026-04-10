@@ -1080,3 +1080,110 @@ The model complexity was reduced. We moved away from "memorization" (high varian
 - **Increase `n_iter`** to at least 50.
 - **Tighten regularization**: Lower the range of `max_depth` and increase the lower bound of `min_samples_leaf`.
 - **Narrow ranges**: Focus the search on the regions that showed promise during the first 15 runs.
+
+---
+
+## Machine Learning Pipeline
+
+### Baseline Approach (Manual)
+- **Manual Preprocessing**: TF-IDF was fitted on the full training set manually.
+- **Manual Results**:
+  - Train Accuracy: 1.0000
+  - Test Accuracy: 0.5000
+- **Issues**:
+  - **Risk of Data Leakage**: If cross-validation is performed on manually pre-processed data, the validation fold has already influenced the global TF-IDF statistics (e.g., word counts, IDF values).
+  - **Not Reproducible**: The preprocessing steps must be manually replicated at deployment time, leading to silent "transformation mismatches."
+
+### Pipeline Approach
+- **Combined Lifecycle**: Text preprocessing (`TfidfVectorizer`) and Model Training (`LogisticRegression`) are unified into a single Scikit-Learn `Pipeline` object.
+- **Benefits**: Atomic fitting, guaranteed consistency, and zero leakage in cross-validation.
+
+### Cross-Validation & Tuning
+- **CV Score**: 0.6111 ± 0.15
+- **Test Accuracy**: 0.5000
+- **Best Parameters**: `{'model__C': 0.1, 'vectorizer__max_features': 50}`
+
+### Why Pipeline is Important
+1. **Prevents Data Leakage**: Inside each CV fold, the vectorizer is refitted *only* on the training portion of that fold, completely isolating the validation fold.
+2. **Consistent Preprocessing**: Exactly the same transformation logic used in training is applied to the test set and production data.
+3. **Reproducibility**: You can save the entire pipeline object (preprocessing + model) as a single file, ensuring that the project "just works" on new systems.
+
+### Key Insight
+Pipelines transform Machine Learning from a fragile series of scripts into a robust, atomic lifecycle that guarantees honest evaluation.
+
+---
+
+## Video Answers: Pipeline Mastery
+
+### Q: What is a Pipeline?
+**👉 Answer: A unified object.**
+It is a sequence of transformers followed by a final model. It allows you to call `.fit()` on raw data and have the entire chain (imputing, scaling, encoding, training) happen in one step.
+
+### Q: Why use ColumnTransformer?
+**👉 Answer: Mixed Data Types.**
+While NLP often just needs TF-IDF, real-world data mixes age (scaling) with gender (encoding). `ColumnTransformer` lets the pipeline apply different rules to different columns simultaneously.
+
+### Q: How does leakage happen without a pipeline?
+**👉 Answer: "Seeing" the test set.**
+If you fit a scaler or vectorizer on your *entire* training set before doing Cross-Validation, your validation folds are no longer a surprise to the model. Their statistics have already "leaked" into the preprocessing parameters.
+
+### Q: How does the pipeline fix this?
+**👉 Answer: Automated Fold-Isolation.**
+During CV, the pipeline refits the entire chain from scratch on every fold. The vectorizer only learns from 4 folds and is then applied to the 5th, ensuring the 5th fold is truly "unseen."
+
+---
+
+## Scenario Question Answer
+
+### Question: Preprocessing before split. Test=92%, Production=78%. What happened?
+
+**👉 Diagnosis: Data Leakage.**
+The high test accuracy (92%) was an illusion caused by the preprocessing step seeing the test data statistics before the split. The model "cheated" by adjusting its word weights/scales based on data it was supposed to be blind to.
+
+**👉 Solution:**
+By using a **Pipeline**, the preprocessing is strictly bound to the training data. This prevents the metrics from being artificially inflated and provides a realistic prediction (78%) during the evaluation phase, allowing for better tuning before deployment.
+
+---
+
+## Data Leakage Demonstration
+
+### Incorrect Workflow (Leaky)
+- **Problem**: TF-IDF (preprocessing) was applied to the FULL dataset before the train-test split.
+- **Consequence**: The vectorizer "memorized" the vocabulary and document frequencies of the test set, creating document representations that leaked future information into the training phase.
+- **Metrics (Inflated)**:
+  - **Leaky CV Score**: 0.8889 (Unrealistic confidence)
+  - **Trustworthy**: ❌ No.
+
+### Correct Workflow (Pipeline)
+- **Solution**: Raw text was split first. All preprocessing (TF-IDF) was encapsulated within a Scikit-Learn **Pipeline**.
+- **Mechanics**: During cross-validation, the pipeline refitted the TF-IDF vectorizer strictly on the 4 training folds before applying it to the 5th validation fold.
+- **Metrics (Honest)**:
+  - **Pipeline CV Score**: 0.6111 (Reflects true generalization)
+  - **Trustworthy**: ✅ Yes.
+
+### Comparison Table
+| Approach | CV Score | Test Score | Trustworthy |
+| :--- | :--- | :--- | :--- |
+| **Leaky** | 0.8889 | 1.0000 | ❌ No |
+| **Pipeline** | 0.6111 | 0.5000 | ✅ Yes |
+
+### Key Insight
+Data leakage creates "Mastermind Models" on paper that become "Middling Models" in production. **Atomic Pipelines** are the only way to guarantee that your model's evaluation remains honest and robust against future data.
+
+---
+
+## Video Script: The Danger of Data Leakage
+
+1. **The Hook**: "Why did my 95% accurate model just fail in production?"
+2. **The Culprit**: Show code where `vectorizer.fit(X_all)` happens before the split. 
+3. **The Logic**: "By fitting here, you are letting the model 'cheat' by seeing the test set's vocabulary ahead of time."
+4. **The Fix**: Show the `Pipeline([...])` implementation.
+5. **The Proof**: Compare the 0.88 (leaky) score against the 0.61 (honest) score. 
+6. **The Moral**: "A lower, honest score is your best friend. It's the only one that tells you the truth about your production future."
+
+---
+
+## Scenario Question Answer
+
+### Q: Why did the model drop from 92% to 78%?
+The 92% score was a "hallucination" caused by **Data Leakage**. Because the preprocessing was done on the full dataset, the model indirectly saw patterns from the test data during training. Once deployed, it encountered truly unseen 78% data for the first time, exposing its inability to generalize. Using a **Pipeline** would have prevented this inflation by isolating the training data from the start.
