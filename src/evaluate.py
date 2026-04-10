@@ -1,19 +1,15 @@
-import pandas as pd
-from sklearn.metrics import accuracy_score
-from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, classification_report
+from src.config import SKILL_LABELS
 
-def evaluate_model(model: LogisticRegression, X_test: pd.DataFrame, y_test: pd.Series) -> float:
+def evaluate_model(model, X_test_tfidf, y_test):
     """
-    Evaluates a trained model using test data.
-    
-    Parameters:
-    model (LogisticRegression): Trained model object.
-    X_test (pd.DataFrame): Test features.
-    y_test (pd.Series): Test target.
-    
-    Returns:
-    float: Accuracy score.
+    Evaluates multi-label classification performance.
     """
-    y_pred = model.predict(X_test)
+    y_pred = model.predict(X_test_tfidf)
+    
     accuracy = accuracy_score(y_test, y_pred)
-    return accuracy
+    
+    # Per-skill reporting
+    report = classification_report(y_test, y_pred, target_names=SKILL_LABELS, zero_division=0)
+    
+    return accuracy, report

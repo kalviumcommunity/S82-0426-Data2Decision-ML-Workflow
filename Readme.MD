@@ -1,6 +1,6 @@
-# Modular Machine Learning Pipeline: Professional Workflow
+# Data2Decision: Project Description Analyzer (NLP)
 
-This project implements a professional Machine Learning workflow for predicting student performance. It features a modular design with clear separation between data ingestion, preprocessing, training, evaluation, and isolated inference.
+This project is a professional Machine Learning system designed to analyze GitHub project descriptions (like READMEs) and provide intelligent career insights. It identifies core skills present in a project and suggests missing skills or new projects to improve a developer's portfolio.
 
 ## 📁 Project Structure
 
@@ -8,48 +8,100 @@ This project implements a professional Machine Learning workflow for predicting 
 project_root/
 │
 ├── data/
-│   └── data.csv          # Raw dataset (study_hours, attendance, passed)
+│   └── projects.csv      # Synthetic multi-label NLP dataset
 │
 ├── models/
-│   └── model.pkl         # Trained binary model (generated after training)
+│   ├── skill_classifier.pkl   # Multi-label classifier (OneVsRest + RandomForest)
+│   └── tfidf_vectorizer.pkl   # TF-IDF vectorization model
 │
 ├── src/
-│   ├── __init__.py       # Package initializer
-│   ├── config.py         # Centralized configuration (paths, hyperparameters)
-│   ├── data_loader.py    # Robust data loading
-│   ├── data_preprocessing.py # Preprocessing and splitting logic
-│   ├── feature_engineering.py # Placeholder for feature transformations
-│   ├── train.py          # Model training and serialization (fit + save)
-│   ├── evaluate.py        # Model performance assessment
-│   ├── predict.py        # Isolated inference (load + predict)
-│   └── main.py           # Pipeline orchestration
+│   ├── __init__.py
+│   ├── config.py             # Centralized configuration (Paths, Skill Labels)
+│   ├── data_loader.py         # Data reading logic
+│   ├── data_preprocessing.py  # Text cleaning and splitting
+│   ├── feature_engineering.py  # TF-IDF transformation
+│   ├── train.py              # Multi-label training and serialization
+│   ├── evaluate.py           # Classification reporting
+│   ├── predict.py            # Isolated NLP inference
+│   ├── recommend.py          # Career insight & recommendation logic
+│   └── main.py               # Full pipeline orchestrator
 │
-├── requirements.txt      # Project dependencies
-└── README.md             # Project documentation
+├── requirements.txt      # Pinned dependency versions
+└── README.md
 ```
 
-## 🚀 Getting Started
+## 🛠️ Environment Setup & Reproducibility
 
-### 1. Installation
-Ensure you have the required libraries installed:
+### 1. Requirements
+- **Python Version**: 3.9+
+- **Platform**: Windows, macOS, or Linux
+
+### 2. Creation & Activation
+We recommend using **Conda** for isolated environment management to ensure that library versions do not conflict with other projects.
+
+**Using Conda (Recommended):**
+```bash
+# Create the environment
+conda create -n ml_env python=3.9 -y
+
+# Activate the environment
+conda activate ml_env          # Windows/macOS/Linux
+```
+
+**Using venv:**
+```bash
+# Create the environment
+python -m venv venv
+
+# Activate (Windows)
+venv\Scripts\activate
+
+# Activate (Linux/macOS)
+source venv/bin/activate
+```
+
+### 3. Install Dependencies
+Install the pinned versions of the required libraries to ensure the model behaves exactly as intended:
 ```bash
 pip install -r requirements.txt
 ```
 
-### 2. Run the Pipeline
-The project is designed to be run as a module from the root directory:
+### 4. Run the Pipeline
+Execute the full end-to-end analysis through the orchestrator:
 ```bash
 python -m src.main
 ```
 
-## ⚙️ Key Concepts
+### 5. Deactivation
+To exit the environment when finished:
+```bash
+conda deactivate   # If using Conda
+deactivate         # If using venv
+```
 
-### Separation of Concerns
-- **Training (`train.py`)**: Responsible for learning patterns and persisting the model.
-- **Inference (`predict.py`)**: Responsible for loading the persisted model and making predictions on single data points. It **never** retrains the model to avoid data leakage and performance degradation.
+---
 
-### Centralized Configuration
-All paths and constants are managed in `src/config.py`, making the project portable across different environments.
+## 🧠 Why Virtual Environments & Reproducibility?
 
-## 📊 Model Performance
-The pipeline trains a Logistic Regression model on student metrics. Typical accuracy on the sample dataset is high due to the strong relationship between study hours, attendance, and passing results.
+### What is Reproducibility?
+In Machine Learning, reproducibility means that if another researcher runs your code on a different machine, they should get the **exact same results** (accuracy, predictions, error rates).
+
+### The Role of Virtual Environments
+- **Isolation**: Prevents "Dependency Hell" where one project requires `pandas 1.0` and another requires `pandas 2.0`.
+- **Consistency**: By using a `requirements.txt` with pinned versions (e.g., `pandas==2.3.3`), we guarantee that the math and logic inside those libraries don't change between machines.
+- **Portability**: It makes it trivial to move a project from a local laptop to a cloud server or a colleague's machine.
+
+### What happens if we DON'T use them?
+1. **Broken Code**: Your project might work today but fail tomorrow after a global library update.
+2. **Data Leakage/Drift**: Subtle changes in library implementations can lead to different prediction results, making your model unreliable.
+3. **Collaboration Friction**: Colleagues will spend hours debugging setup issues instead of working on the code.
+
+---
+
+## ⚡ Core Features
+
+### NLP Logic
+The system uses **TF-IDF Vectorization** to convert project descriptions into numerical features. It then employs a **Multi-Output Classifier** to detect multiple skills from a single block of text.
+
+### Intelligent Recommendations
+The `recommend.py` module analyzes detected skills against industry standards to identify gaps and suggest the next stage of portfolio growth.

@@ -1,0 +1,28 @@
+# Virtual Environments
+venv/
+.venv/
+env/
+ml_env/
+anaconda-project/
+
+# Python Cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Data & Models (ignore large artifacts if not using LFS)
+models/*.pkl
+data/*.csv
+
+# Distribution / Build
+dist/
+build/
+*.egg-info/
+
+# IDEs
+.vscode/
+.idea/
+
+# OS Files
+.DS_Store
+Thumbs.db

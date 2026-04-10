@@ -1,24 +1,19 @@
 import joblib
-import pandas as pd
-from sklearn.linear_model import LogisticRegression
+from sklearn.multiclass import OneVsRestClassifier
+from sklearn.ensemble import RandomForestClassifier
 from src.config import MODEL_PATH
 
-def train_model(X_train: pd.DataFrame, y_train: pd.Series) -> LogisticRegression:
+def train_model(X_train_tfidf, y_train):
     """
-    Trains a Logistic Regression model and saves it to a file.
-    
-    Parameters:
-    X_train (pd.DataFrame): Training features.
-    y_train (pd.Series): Training target.
-    
-    Returns:
-    LogisticRegression: Trained model object.
+    Trains a Multi-label classifier (OneVsRest with RandomForest).
     """
-    model = LogisticRegression()
-    model.fit(X_train, y_train)
-
+    base_clf = RandomForestClassifier(n_estimators=100, random_state=42)
+    model = OneVsRestClassifier(base_clf)
+    
+    model.fit(X_train_tfidf, y_train)
+    
     # Save the model
     joblib.dump(model, MODEL_PATH)
-    print(f"Model saved successfully to {MODEL_PATH}")
-
+    print(f"Skill Classifier saved to {MODEL_PATH}")
+    
     return model

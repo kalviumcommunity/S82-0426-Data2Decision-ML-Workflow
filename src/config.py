@@ -1,12 +1,12 @@
-# Configuration settings for the Machine Learning Project
+# Configuration for Project Description Analyzer (NLP)
 
-DATA_PATH = "data/data.csv"
-MODEL_PATH = "models/model.pkl"
-TARGET_COLUMN = "passed"
+DATA_PATH = "data/projects.csv"
+MODEL_PATH = "models/skill_classifier.pkl"
+VECTORIZER_PATH = "models/tfidf_vectorizer.pkl"
 
-# Feature settings
-FEATURES = ["study_hours", "attendance"]
+# Skill labels (Target columns)
+SKILL_LABELS = ["Python", "SQL", "React", "Machine_Learning", "Flask"]
 
-# Model Hyperparameters
+# NLP Settings
 RANDOM_STATE = 42
 TEST_SIZE = 0.2
