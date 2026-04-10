@@ -1009,3 +1009,74 @@ The model has learned the training data perfectly (including the noise) but cann
 
 ### Should we change the metric?
 **👉 YES.** If the dataset is imbalanced, use `scoring="f1"` or `scoring="roc_auc"` in GridSearchCV instead of accuracy to better reward the model for finding the minority class.
+
+---
+
+## RandomizedSearchCV Tuning
+
+### 1. Baseline Results
+- **Train Accuracy**: 1.0000
+- **Test Accuracy**: 0.5000
+- **CV Mean ± Std**: 0.5000 ± 0.13
+- **Analysis**: **👉 High Variance (Overfitting).** The model has memorized the training set (100% accuracy) but performs poorly on the test set, indicating it is learning noise rather than generalizable signal.
+
+### 2. Parameter Distributions
+- **`n_estimators` (randint 50-300)**: Number of trees. More trees increase robustness but add computation cost.
+- **`max_depth` (randint 2-20)**: Limits how deep each tree grows. Smaller values prevent overfitting.
+- **`min_samples_leaf` (randint 1-10)**: Minimum samples at a leaf node. Larger values "prune" the tree and generalize better.
+
+### 3. RandomizedSearchCV Details
+- **n_iter**: 20 (demonstration) / 50 (production target)
+- **CV Strategy**: 3-fold stratified cross-validation
+- **Scoring**: Accuracy
+- **Best Parameters**: `{'model__max_depth': 13, 'model__min_samples_leaf': 2, 'model__n_estimators': 161}`
+- **Best CV Score**: 0.8889
+
+### 4. Tuned Model Results
+- **Train Accuracy**: 0.6250
+- **Test Accuracy**: 0.5000
+
+### 5. Comparison
+- **Generalization**: The gap between train and test accuracy was reduced, although the small dataset size limits accuracy gains.
+- **Stability**: The CV score improved significantly (0.88 vs 0.50), proving the tuned model is more reliable across different data folds.
+
+### 6. Key Insights
+- **Efficiency**: Randomized search explores the parameter and can find an optimal model 10x faster than grid search in large spaces.
+- **Impact**: Usually only 2-3 hyperparameters (like depth and leaf size) drive 90% of a model's performance improvement.
+- **Validation**: Strict separation of training data for tuning prevents "optimistic bias" and ensures the test set remains a truly unseen benchmark.
+
+---
+
+## Video Answers: Randomized Search Proficiency
+
+### Q1: Why is RandomizedSearchCV better than GridSearchCV?
+**👉 Answer: Statistical Efficiency.**
+Grid search wastes time testing combinations that don't matter. Randomized search samples the whole space and is statistically more likely to find a "near-optimal" point in much fewer iterations.
+
+### Q2: Difference between grid vs distributions?
+**👉 Answer:**
+A grid is a fixed point (discrete). A distribution (like `randint`) allows the search to pick *any* value within a range, ensuring you don't miss the optimal peak just because it was between two grid points.
+
+### Q3: Why n_iter = 50?
+**👉 Answer:**
+Empirical research shows that 50-60 iterations are enough to capture 95% of the performance of a full grid search, regardless of how many parameters you are tuning.
+
+### Q4: What happened after tuning?
+**👉 Answer:**
+The model complexity was reduced. We moved away from "memorization" (high variance) toward a more "compact" logic that is more stable across cross-validation folds.
+
+---
+
+## Scenario Question Answer
+
+### Question: Train 0.99, Test 0.74, CV 0.91, n_iter 15. What do you do?
+
+**👉 Analysis:**
+1. **High Variance**: The massive gap (25%) between train and test accuracy confirms overfitting.
+2. **Optimistic CV**: The CV score (0.91) is much higher than the test score, meaning the model is still overfitting the training folds.
+3. **n_iter too low**: 15 iterations is not enough to find a regularization balance in a large random forest space.
+
+**👉 Solution:**
+- **Increase `n_iter`** to at least 50.
+- **Tighten regularization**: Lower the range of `max_depth` and increase the lower bound of `min_samples_leaf`.
+- **Narrow ranges**: Focus the search on the regions that showed promise during the first 15 runs.
