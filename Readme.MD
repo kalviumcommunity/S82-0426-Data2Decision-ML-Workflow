@@ -158,3 +158,32 @@ This repository includes an additional module, `src/problem_type_analysis.py`, w
 ### Leakage Prevention
 - **Only input text used**: Features are derived strictly from the `project_description`.
 - **No post-output features**: Any columns created after or alongside the skill tags (like `manual_tags`) are strictly excluded during training.
+
+---
+
+## Feature Distribution Analysis
+
+### Numerical Insights
+- **Text Length Distribution**: Most project descriptions are around 50-60 characters, showing a relatively tight distribution with low variance.
+- **Word Count Skewness**: The distribution of word counts is slightly right-skewed (0.5084), indicating a few projects with significantly longer descriptions.
+- **Outliers**: There are minimal outliers in the current small dataset, but the boxplot identifies projects with 10+ words as the upper-end range.
+
+### Text Insights
+- **Most Common Words**: "python", "using", "built", and "react" are the most frequent keywords, aligning with the project's focus.
+- **Keyword Patterns**: Projects consistently describe the "tools" and "purpose" (e.g., "management", "scripts").
+
+### Target Insights
+- **Skill Distribution Imbalance**: "Python" is the most dominant skill (60% presence), while "Flask" is the least frequent (20% presence).
+- **Most Common Skills**: Python, SQL, and React form the majority of the dataset labels.
+
+### Target Comparison
+- **Longer descriptions → more skills**: Generally, projects with 8+ words tend to have more associated skill labels than shorter ones.
+- **Pattern observations**: ML and Backend projects (Python/Flask) often share similar word distributions compared to purely frontend tasks.
+
+### Transformations (if needed)
+- **No scaling needed for text**: NLP features like TF-IDF inherently normalize term frequencies.
+- **TF-IDF handles normalization**: It accounts for document length variations automatically.
+
+### Leakage Prevention
+- **Only input text used**: All analysis is derived strictly from the `project_description`.
+- **No future information included**: `manual_tags` and `project_id` are completely ignored during distribution analysis.
