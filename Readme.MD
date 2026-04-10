@@ -552,3 +552,53 @@ The dataset is imbalanced. If 85% of projects are 'Python', a model that just sa
 ### Q5: What is the effect of the Threshold?
 **👉 Threshold Increase (e.g., to 0.8)**: Makes the model "stricter." Precision increases (less false alarms), but Recall decreases (more missed detections).
 **👉 Threshold Decrease (e.g., to 0.2)**: Makes the model "braver." Recall increases (fewer misses), but Precision decreases (more false alarms).
+
+---
+
+## Accuracy Evaluation
+
+### What is Accuracy?
+- **Measures Correctness**: It represents the percentage of total predictions that the model got exactly right.
+- **Intuitive**: It is the most common metric for classification but can be deceptive.
+
+### Baseline vs Model
+- **Baseline Accuracy**: 0.5000 (Majority class guessing)
+- **Model Accuracy**: 0.5000
+- **F1-Score**: 0.6667 (Indicates better balance than accuracy suggests)
+
+### Confusion Matrix Insight
+- **True Positives (TP)**: 1
+- **True Negatives (TN)**: 0
+- **False Positives (FP)**: 1
+- **False Negatives (FN)**: 0
+- **Mistake Analysis**: In our sample, the model is correctly identifying the skill (TP), but creating a "False Alarm" (FP) for a negative case. Accuracy doesn't tell us *which* mistake is happening, but the Confusion Matrix does.
+
+### Why Accuracy is Misleading
+- **Dataset Imbalance**: If 90% of your projects are 'Python', a model can achieve 90% accuracy by never learning anything and just guessing 'Python' for everything.
+- **Hidden Failure**: A model could have 99% accuracy but a 0% recall for a critical minority class. In our project, accuracy was 50% for both, but the model's ability to actually detect the skill (Recall) is what sets it apart.
+
+### Additional Metric: F1-Score
+- **Balanced View**: We use the F1-score to take both Precision (is it a false alarm?) and Recall (did we miss it?) into account.
+
+### Key Insight
+- Accuracy alone is not enough to declare a model "ready."
+- You must always check the **Confusion Matrix** to see the type of errors and the **F1-score** to ensure the model isn't just exploiting class imbalance.
+
+---
+
+## Video Answers: Accuracy & Reliability
+
+### Q1: Why is baseline accuracy misleading?
+**👉 Dataset is imbalanced.** The majority class dominates the total count. A model could be perfectly accurate on the majority while being 100% wrong on the minority, making it a failed model despite a high accuracy score.
+
+### Q2: Is the model better if accuracy stays the same?
+**👉 YES.** If the **Recall or F1-score** improved, the model is significantly better because it is actually learning to distinguish between classes rather than just sticking to the majority.
+
+### Q3: Why does accuracy barely change after training?
+**👉 Small Minority Class.** If the class we are trying to predict is very small (e.g., 2% of the data), even big improvements in finding those samples won't move the overall accuracy number much.
+
+### Q4: What is the most important metric?
+**👉 It depends on the problem.** If you can't afford to miss a skill (e.g., matching a candidate to a job), **Recall** is most important. If you can't afford false matches, **Precision** is most important. F1 typically provides the best compromise.
+
+### Q5: Should we deploy based only on Accuracy?
+**👉 ❌ No.** Accuracy is a "shallow" metric. Without checking stability (Cross-validation) and error types (Confusion Matrix), you risk deploying a model that fails completely in the real world.
