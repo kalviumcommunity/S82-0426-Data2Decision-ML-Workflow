@@ -263,3 +263,23 @@ A Machine Learning model must only learn from information that would be availabl
 
 ### Key Insight
 Feature types in this project are defined based on how the model interprets data (unstructured vs. structured), not just how the data is stored (strings vs. numbers). This allows the system to focus on the semantic meaning of project descriptions.
+
+---
+
+## Numerical Feature Scaling
+
+### In This Project
+- **No numerical features in raw dataset**: The primary data is unstructured text (GitHub READMEs).
+- **Text is converted using TF-IDF**: This transforms words into a numerical representation.
+- **TF-IDF already normalizes data**: The weighting scheme (TF * IDF) inherently accounts for document length and term frequency, making additional scaling like `StandardScaler` unnecessary and potentially harmful to sparsity.
+
+### Scaling Decision
+- **StandardScaler NOT applied** to the main multi-label classification pipeline.
+
+### Demonstration
+- A separate demonstration (`src/scaling_demo.py`) was implemented to show the effect of scaling on distance-based models like **Logistic Regression**.
+- **Result**: Accuracy improved from ~81% to ~87% when scaling was applied to synthetic data with varied ranges, demonstrating that scaling improves optimization stability for gradient-based solvers.
+
+### Leakage Prevention
+- **Split before Scaling**: The `StandardScaler` is fitted only on the training set.
+- **Transformed Test Set**: The test data is transformed using the mean and standard deviation learned strictly from the training data, preventing information from the future from entering the training process.
