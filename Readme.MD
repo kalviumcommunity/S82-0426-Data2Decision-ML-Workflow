@@ -952,3 +952,60 @@ Permutation importance is the gold standard for real-world decision-making as it
 
 ### Which method is better for feature selection?
 **👉 Permutation importance.** It protects you from the cardinality bias of MDI and ensures you only keep features that have a measurable impact on unseen data.
+
+---
+
+## Hyperparameter Tuning (GridSearchCV)
+
+### Baseline Model
+- **Train Accuracy**: 1.0000
+- **Test Accuracy**: 1.0000 (Potentially "lucky" on small data)
+- **CV Score**: 0.5000 ± 0.13
+- **👉 Diagnosis**: Balanced but unstable (Low CV score relative to training).
+
+### Hyperparameters
+- **max_depth**: Controls the complexity of the tree. A deeper tree captures more detail but risks overfitting.
+- **min_samples_leaf**: Controls the minimum samples required to be at a leaf node. Higher values "prune" the tree and prevent it from fitting individual outliers.
+
+### GridSearchCV
+**Best Params:**
+- **max_depth**: 2
+- **min_samples_leaf**: 5
+
+**Best CV Score**: 0.6111
+
+### Tuned Model
+- **Train Accuracy**: 0.6250
+- **Test Accuracy**: 0.5000
+
+### Comparison
+- **Stability**: While the test accuracy dropped on this tiny set, the **CV Score improved (0.61 vs 0.50)**, indicating the tuned model is more reliable across different data folds.
+- **Complexity**: The tree was simplified from an unconstrained structure to a depth of only 2, significantly reducing the risk of "memorizing" specific training text.
+
+### Visualization Interpretation
+- **Low depth (e.g., 2)**: Higher Bias (the model is simpler), but lower Variance.
+- **High depth (e.g., 10+)**: High Variance. The training accuracy reaches 1.0 quickly, but the CV score begins to decline after the optimal point.
+- **Optimal (Depth=2)**: The point where the CV score is maximized before the model starts over-fitting.
+
+### Conclusion
+GridSearchCV allowed us to bypass "lucky" training results and find a model that is statistically more stable across diverse data samples.
+
+---
+
+## Video Answers: Tuning Diagnostics
+
+### Q: Train 100%, Test 73%
+**👉 Answer: Overfitting (High Variance).**
+The model has learned the training data perfectly (including the noise) but cannot generalize that knowledge to the unseen test set.
+
+### Why is CV still high if the model overfits?
+**👉 Model overfits each fold.** If the model is complex enough, it can overfit every single CV fold individually, resulting in a high average CV score that still doesn't represent real-world generalization. You must always check the gap between Train and CV scores.
+
+### How to fix it?
+**👉 Regularization.** Reduce the `max_depth` (e.g., from None to 4) or increase the `min_samples_leaf` (e.g., to 10). This forces the model to find only the most important, shared patterns.
+
+### Should we change the grid?
+**👉 YES.** Shift the grid toward smaller depth values (e.g., `[2, 3, 4, 5]`) to find the exact point where generalized performance peaks.
+
+### Should we change the metric?
+**👉 YES.** If the dataset is imbalanced, use `scoring="f1"` or `scoring="roc_auc"` in GridSearchCV instead of accuracy to better reward the model for finding the minority class.
