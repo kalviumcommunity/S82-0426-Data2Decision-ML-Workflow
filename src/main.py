@@ -1,52 +1,67 @@
 from src.data_loader import load_data
 from src.data_preprocessing import preprocess_data
+from src.feature_engineering import build_vectorizer, transform_text
 from src.train import train_model
 from src.evaluate import evaluate_model
 from src.predict import predict
-from src.config import DATA_PATH, TARGET_COLUMN
+from src.recommend import get_recommendations
+from src.config import DATA_PATH
 
 def run_pipeline():
     """
-    Main orchestration function to run the ML pipeline.
+    Orchestrates the NLP Project Description Analyzer pipeline.
     """
-    print("\n" + "="*40)
-    print("🚀 STARTING PROFESSIONAL ML PIPELINE")
-    print("="*40)
+    print("\n" + "="*50)
+    print("🚀 STARTING PROJECT DESCRIPTION ANALYZER (NLP)")
+    print("="*50)
 
-    # 1. DATA LOADING
-    print(f"\n[1/5] Loading data from: {DATA_PATH}")
+    # 1. Load Data
+    print(f"\n[1/6] Loading project data...")
     df = load_data(DATA_PATH)
 
-    # 2. DATA PREPROCESSING
-    print("[2/5] Splitting data into train/test sets...")
-    X_train, X_test, y_train, y_test = preprocess_data(df, TARGET_COLUMN)
+    # 2. Preprocess (Cleaning & Train/Test Split)
+    print("[2/6] cleaning text and splitting data...")
+    X_train, X_test, y_train, y_test = preprocess_data(df)
 
-    # 3. MODEL TRAINING
-    print("[3/5] training model...")
-    model = train_model(X_train, y_train)
+    # 3. Feature Engineering (TF-IDF Vectorization)
+    print("[3/6] Building Vectorizer & Transforming features...")
+    vectorizer = build_vectorizer(X_train)
+    X_train_tfidf = transform_text(X_train, vectorizer)
+    X_test_tfidf = transform_text(X_test, vectorizer)
 
-    # 4. MODEL EVALUATION
-    print("[4/5] Evaluating model performance...")
-    accuracy = evaluate_model(model, X_test, y_test)
-    print(f"📊 Final Model Accuracy: {accuracy:.2f}")
+    # 4. Model Training
+    print("[4/6] Training Multi-label Skill Classifier...")
+    model = train_model(X_train_tfidf, y_train)
 
-    # 5. INFERENCE (Isolated Prediction)
-    print("\n[5/5] Testing Isolated Prediction...")
-    # Sample dictionary matches config.FEATURES
-    sample_input = {
-        "study_hours": 8,
-        "attendance": 85
-    }
+    # 5. Model Evaluation
+    print("[5/6] Evaluating Performance...")
+    accuracy, report = evaluate_model(model, X_test_tfidf, y_test)
+    print(f"📊 Global Accuracy: {accuracy:.2f}")
+    print("\nDetailed Classification Report:")
+    print(report)
+
+    # 6. INFERENCE & RECOMMENDATION
+    print("\n[6/6] Analyzing Sample Project Description...")
     
-    # We call predict module which loads the saved model
-    result = predict(sample_input)
-    status = "SUCCESS" if result == 1 else "FAIL"
-    print(f"🔮 Input Sample: {sample_input}")
-    print(f"🎯 Prediction result: {status} (Raw: {result})")
+    # Real-world sample input (like a README snippet)
+    sample_readme = "A portfolio website showcasing design work using React components and custom SQL database integration."
+    
+    print(f"📄 Input Description: \"{sample_readme}\"")
+    
+    # Predict Skills
+    detected_skills = predict(sample_readme)
+    print(f"🔍 Detected Skills: {detected_skills}")
+    
+    # Get Recommendations
+    rec = get_recommendations(detected_skills)
+    
+    print("\n💡 Career Insights:")
+    print(f"   - Missing Skills to learn: {', '.join(rec['missing_skills'])}")
+    print(f"   - Suggested Next Projects: {', '.join(rec['suggested_next_projects'])}")
 
-    print("\n" + "="*40)
-    print("🏁 PIPELINE COMPLETED SUCCESSFULLY")
-    print("="*40 + "\n")
+    print("\n" + "="*50)
+    print("🏁 ANALYSIS COMPLETED SUCCESSFULLY")
+    print("="*50 + "\n")
 
 if __name__ == "__main__":
     run_pipeline()

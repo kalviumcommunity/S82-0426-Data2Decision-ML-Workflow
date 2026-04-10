@@ -1,31 +1,27 @@
 import joblib
 import pandas as pd
-from typing import Dict, Any
-from src.config import MODEL_PATH, FEATURES
+from typing import List
+from src.config import MODEL_PATH, VECTORIZER_PATH, SKILL_LABELS
+from src.data_preprocessing import clean_text
 
-def predict(sample_dict: Dict[str, Any]) -> Any:
+def predict(readme_text: str) -> List[str]:
     """
-    Loads the saved model and predicts on a new data point.
-    
-    Parameters:
-    sample_dict (Dict[str, Any]): Input data as a dictionary.
-    
-    Returns:
-    Any: Model prediction.
+    Predicts skills from a single project description.
     """
-    # Load the model (Isolation: No retraining here!)
-    try:
-        model = joblib.load(MODEL_PATH)
-    except FileNotFoundError:
-        raise FileNotFoundError(f"Model file not found at {MODEL_PATH}. Train the model first.")
-
-    # Convert to DataFrame
-    df = pd.DataFrame([sample_dict])
-
-    # Ensure feature order matches training
-    df = df[FEATURES]
-
+    # Load components
+    model = joblib.load(MODEL_PATH)
+    vectorizer = joblib.load(VECTORIZER_PATH)
+    
+    # Process text
+    cleaned_input = clean_text(readme_text)
+    tfidf_input = vectorizer.transform([cleaned_input])
+    
     # Predict
-    prediction = model.predict(df)
+    prediction_binary = model.predict(tfidf_input)[0]
     
-    return prediction[0]
+    # Map back to skill names
+    predicted_skills = [
+        SKILL_LABELS[i] for i, val in enumerate(prediction_binary) if val == 1
+    ]
+    
+    return predicted_skills

@@ -1,8 +1,23 @@
-# feature_engineering.py
-# (Placeholder for future feature engineering logic like scaling or encoding)
+import joblib
+import pandas as pd
+from sklearn.feature_extraction.text import TfidfVectorizer
+from src.config import VECTORIZER_PATH
 
-def apply_feature_engineering(df):
+def build_vectorizer(X_train: pd.Series) -> TfidfVectorizer:
     """
-    Applies feature engineering logic to the dataframe.
+    Trains a TF-IDF vectorizer and saves it.
     """
-    return df
+    vectorizer = TfidfVectorizer(max_features=1000)
+    vectorizer.fit(X_train)
+    
+    # Save vectorizer
+    joblib.dump(vectorizer, VECTORIZER_PATH)
+    print(f"Vectorizer saved to {VECTORIZER_PATH}")
+    
+    return vectorizer
+
+def transform_text(texts: pd.Series, vectorizer: TfidfVectorizer):
+    """
+    Transforms text data into TF-IDF vectors.
+    """
+    return vectorizer.transform(texts)
