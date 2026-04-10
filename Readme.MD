@@ -78,7 +78,10 @@ To exit the environment when finished:
 conda deactivate   # If using Conda
 deactivate         # If using venv
 ```
-
+### Run Project
+```bash
+python -m src.main
+```
 ---
 
 ## 🧠 Why Virtual Environments & Reproducibility?
