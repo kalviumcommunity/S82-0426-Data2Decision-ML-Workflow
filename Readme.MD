@@ -217,3 +217,49 @@ The correct workflow is to **Split first**, then fit the scaler ONLY on the trai
 
 ### Key Learning
 A Machine Learning model must only learn from information that would be available at prediction time. Any "look-ahead" into the test set's distribution violates the core principle of objective evaluation.
+
+---
+
+## Feature Type Definition
+
+### Target Variable
+- **Column**: `skills`
+- **Type**: Multi-label classification
+- **Meaning**: Technologies and skills detected within the project description.
+
+---
+
+### Numerical Features
+- **None in raw dataset**: Standard numerical metrics (like age or price) are not present in the raw GitHub project data.
+- **Transformational Numericality**: Numerical representation is generated dynamically using TF-IDF during the preprocessing phase.
+
+---
+
+### Categorical Features
+- **None in raw dataset**: There are no label-based categorical columns (like 'City' or 'Category') used as input features in this project.
+- **No label-based categorical columns**: The model relies entirely on unstructured text.
+
+---
+
+### Text Features
+- **project_description**: This is the primary input feature.
+- **NLP Processing**: Converted into high-dimensional numerical vectors using TF-IDF before being passed to the classifier.
+
+---
+
+### Excluded Columns
+- **project_id** → identifier (removed as it has no predictive value and leads to overfitting).
+- **manual_tags** → potential data leakage (removed to ensure objective performance evaluation).
+
+---
+
+### Edge Case Handling
+- **No binary columns present** in features.
+- **No ordinal features** detected.
+- **No high-cardinality categorical features** to handle.
+- **Text handled separately** using a dedicated NLP pipeline.
+
+---
+
+### Key Insight
+Feature types in this project are defined based on how the model interprets data (unstructured vs. structured), not just how the data is stored (strings vs. numbers). This allows the system to focus on the semantic meaning of project descriptions.

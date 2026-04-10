@@ -1,5 +1,5 @@
 import pandas as pd
-from src.config import TARGET_COLUMN, ALL_FEATURES
+from src.config import TARGET_COLUMN, ALL_FEATURES, SKILL_LABELS
 
 def load_data(path: str) -> pd.DataFrame:
     """
@@ -11,22 +11,18 @@ def load_data(path: str) -> pd.DataFrame:
             raise ValueError(f"Dataset at {path} is empty.")
             
         # Assignment: Validation that target exists and is not in features
-        if isinstance(TARGET_COLUMN, list):
-            assert all(c in df.columns for c in TARGET_COLUMN), "Target labels missing in CSV"
-        else:
-            assert TARGET_COLUMN in df.columns, f"Target {TARGET_COLUMN} missing"
+        # We check SKILL_LABELS for the actual multi-label structure
+        target_cols = SKILL_LABELS
+        assert all(c in df.columns for c in target_cols), f"Target labels {target_cols} missing in CSV"
             
-        assert all(c in df.columns for c in ALL_FEATURES), "Feature columns missing in CSV"
+        assert all(c in df.columns for c in ALL_FEATURES), f"Feature columns {ALL_FEATURES} missing in CSV"
         
         print("\n📊 DATA LOADING & VALIDATION")
         print(f"Features: {df[ALL_FEATURES].shape}")
         
         # Target Distribution (Multi-label summary)
-        if isinstance(TARGET_COLUMN, list):
-            print("Target distribution (Label Counts):")
-            print(df[TARGET_COLUMN].sum())
-        else:
-            print(f"Target distribution:\n{df[TARGET_COLUMN].value_counts()}")
+        print("Target distribution (Label Counts):")
+        print(df[target_cols].sum())
             
         return df
     except FileNotFoundError:
