@@ -259,6 +259,59 @@ A Machine Learning model must only learn from information that would be availabl
 - **No high-cardinality categorical features** to handle.
 - **Text handled separately** using a dedicated NLP pipeline.
 
+
+---
+
+## Model Evaluation using MAE
+
+### What is MAE?
+- **Mean Absolute Error**: It represents the average magnitude of the errors in a set of predictions, without considering their direction.
+- **Unit Consistent**: It is measured in the exact same units as the target variable, making it highly intuitive for stakeholders.
+
+### Results
+- **Baseline MAE**: 105.11
+- **Model MAE**: 15.65
+- **Improvement**: 85.11% reduction in average error.
+
+### Interpretation
+- Model predictions improved by **89.46 units** on average compared to a naive mean-predictor.
+- The MAE of 15.65 shows the "real-world" average mistake the model makes when estimating the continuous target.
+
+### RMSE Insight
+- **RMSE** is invariably higher than MAE (usually around ~20 in this demo).
+- This indicates that while the average error is low, there are some "larger" outliers in the predictions that the squared-error penalty of RMSE is highlighting.
+
+### R² Insight
+- **R² Score (0.98)**: Indicates that 98% of the target's variance is successfully explained by our features.
+
+### Cross Validation
+- **Mean MAE**: 16.35 ± 0.94
+- **Stability**: The low standard deviation (0.94) across 5 folds proves the model is stable and not sensitive to specific data splits.
+
+### Key Learning
+- **Intuition**: MAE is the easiest metric to explain to non-technical users.
+- **Context**: An MAE of 15 means nothing without the baseline context (105).
+- **Holistic View**: Never rely on a single metric; use R² for variance and RMSE for outlier sensitivity.
+
+---
+
+## Video Answer: Advanced Evaluation Nuances
+
+### Q1: Is the model better?
+**👉 YES.** The reduction in MAE from 105 to 15 is a definitive proof of learning.
+
+### Q2: Why is RMSE always higher?
+**👉 RMSE penalizes outliers.** Because RMSE squares the errors before averaging them, even a few large mistakes will pull the RMSE far above the MAE.
+
+### Q3: What if R² = 0.12?
+**👉 Weak Model.** It means the model is barely doing better than a random guess. Only 12% of the story is being told by your variables.
+
+### Q4: What if CV variation is high?
+**👉 Model Unstable.** If the MAE jumps from 10 to 50 across different folds, your model is likely overfitting or the data is too small/noisy to generalize.
+
+### Q5: Is only MAE enough?
+**👉 ❌ NO.** MAE tells you the average error, but R² tells you the trend, and RMSE tells you about the risk of large failure. You need all three for a complete picture.
+
 ---
 
 ### Key Insight
