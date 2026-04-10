@@ -160,7 +160,6 @@ A churn prediction model performs well during testing, but accuracy decreases af
 - **Evaluation prevents false confidence**  
 - **Monitoring prevents silent performance degradation**  
 - Most ML failures are due to **data or pipeline issues**, not the model  
-
 ---
 
 ## 🚀 Conclusion
@@ -169,3 +168,5 @@ Machine Learning is a structured pipeline, not a single step.
 Understanding each stage helps in building reliable, scalable, and real-world ML systems.
 
 👉 Data → Features → Model → Prediction → Decision
+
+
