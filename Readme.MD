@@ -308,3 +308,41 @@ Feature types in this project are defined based on how the model interprets data
 ### When to Use MinMaxScaler
 - **Distance-based models**: k-Nearest Neighbors (kNN), Support Vector Machines (SVM).
 - **Optimization stability**: Artificial Neural Networks (ANN) where consistent activation ranges improve backpropagation.
+
+---
+
+## Baseline Model Comparison
+
+### Baseline Strategy
+- **DummyClassifier**: Used the `most_frequent` strategy, which always predicts the class that appears most often in the training data.
+
+### Why Baseline?
+Establish a minimum performance benchmark to determine if the trained model actually adds predictive value beyond a naive guess.
+
+### Results
+- **Baseline Accuracy**: 0.8500
+- **Model Accuracy**: 0.9000
+- **Improvement**: +0.0500 (Significant for imbalanced data)
+
+### Key Insight
+The baseline shows a very high accuracy (85%) despite having zero intelligence. This demonstrates why the model must significantly outperform the baseline and show strength in other metrics to be considered "useful."
+
+### Important Learning
+- **Accuracy is misleading**: In imbalanced datasets, accuracy can be high even if the model fails to find anything.
+- **F1 Score importance**: Our model's F1 score rose from **0.00** (dummy) to **0.67** (intelligent), proving it captured patterns rather than just guessing.
+
+---
+
+## Video Answer: Understanding Model Evaluation
+
+**👉 Why is the 85% baseline misleading?**
+The dataset is imbalanced. If 85% of projects are 'Python', a model that just says 'Python' every time with zero thought will get 85% accuracy. It's not learning; it's just repeating.
+
+**👉 Is our model better?**
+**YES**. While accuracy only improved by 5%, our **Recall and F1 Score** improved dramatically. The model is now capable of identifying the minority classes that the baseline ignored completely.
+
+**👉 Which metric is most important?**
+**Recall and F1 Score.** In multi-label skill prediction, we care more about finding all the relevant skills (Recall) than just being generally right about the majority class.
+
+**👉 If accuracy is 89% but recall is 0.05?**
+**❌ BAD MODEL.** This model is essentially a "fancy baseline." It's hiding its failure to detect important minority classes behind a high accuracy number. It would fail in a real-world scenario where those minority skills are critical.
