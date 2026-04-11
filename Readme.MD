@@ -1250,5 +1250,41 @@ Oversampling improves minority detection but must be applied strictly to the tra
 
 SMOTE or class weights should be chosen based on dataset characteristics (SMOTE for enough base samples, Class Weights for very small/text-heavy data) and validated strictly via Cross-Validation.
 
+---
+
+## Model Comparison
+
+### Models Used
+
+*   **Logistic Regression**: Linear classifier known for interpretability and speed.
+*   **Random Forest**: Ensemble of decision trees that handles non-linear relationships well but can overfit on tiny datasets.
+*   **Naive Bayes**: Probabilistic classifier highly efficient for text data based on word frequency independence.
+
+---
+
+### Cross Validation Results
+
+| Model | CV Mean (F1) | CV Std | Final Choice |
+| :--- | :--- | :--- | :--- |
+| Logistic Regression | *High* | *Low* | ✅ Primary |
+| Random Forest | *Variable* | *High* | ⚠️ Backup |
+| Naive Bayes | *Moderate* | *Medium* | ⚖️ Baseline |
+
+---
+
+### Final Selection Justification
+
+The **Logistic Regression** model is often selected due to:
+*   **Stability**: Lower standard deviation in cross-validation results.
+*   **Interpretability**: Clear understanding of which words influence the skill predictions.
+*   **Speed**: Faster training and inference compared to ensemble methods.
+
+---
+
+### Key Insight
+
+Model comparison using a fair, consistent pipeline is the only way to objectively determine which algorithm best captures the underlying patterns of your specific dataset without being misled by random splits.
+
+
 
 
