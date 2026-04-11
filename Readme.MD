@@ -1215,4 +1215,40 @@ Class weights modify the loss function, forcing the model to pay more attention 
 
 Weighted models are more suitable when detecting minority class is critical (e.g., fraud, disease detection, or identifying rare specialized skills).
 
+---
+
+## Oversampling Techniques
+
+### Baseline Model
+
+*   **High accuracy**: The model is biased toward the majority class.
+*   **Poor recall**: Minority class samples are largely ignored or misclassified.
+
+---
+
+### Random Oversampling
+
+*   **Improved recall**: Duplicates minority samples to balance the training distribution.
+*   **Risk of overfitting**: Excessive duplication can lead the model to memorize specific training points.
+
+---
+
+### SMOTE (Synthetic Minority Over-sampling Technique)
+
+*   **Best balance**: Creates synthetic samples between existing minority points.
+*   **Generates synthetic data**: Avoids literal duplication, leading to better generalization.
+
+---
+
+### Key Insight
+
+Oversampling improves minority detection but must be applied strictly to the training data. Using a **Pipeline** ensures that oversampling is performed inside each cross-validation fold, preventing **Data Leakage**.
+
+---
+
+### Conclusion
+
+SMOTE or class weights should be chosen based on dataset characteristics (SMOTE for enough base samples, Class Weights for very small/text-heavy data) and validated strictly via Cross-Validation.
+
+
 
