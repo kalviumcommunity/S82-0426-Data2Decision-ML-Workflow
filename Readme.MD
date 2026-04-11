@@ -1186,3 +1186,33 @@ It gives false confidence (high metrics on paper) but leads to catastrophic fail
 ### 5. Why lower honest score is better?
 Because it reflects true generalization performance. A realistic 75% score is more valuable for business decisions than a "hallucinated" 95% score.
 
+---
+
+## Class Weights Analysis
+
+### Baseline Model
+
+*   **High accuracy**: The model often achieves high overall accuracy by correctly predicting the majority class.
+*   **Poor recall for minority**: It fails to detect critical minority samples (like specialized skills or fraud cases) as it prioritizes overall error reduction.
+
+---
+
+### Weighted Model
+
+*   **Improved recall**: By penalizing minority errors more heavily, the model successfully identifies more positive cases.
+*   **Slight drop in precision**: The increased sensitivity leads to more false alarms on majority samples.
+*   **Lower but realistic accuracy**: Overall accuracy may drop, but the model becomes far more useful for its intended specialized task.
+
+---
+
+### Key Insight
+
+Class weights modify the loss function, forcing the model to pay more attention to minority class errors. This shift in priority is essential for imbalanced classification.
+
+---
+
+### Conclusion
+
+Weighted models are more suitable when detecting minority class is critical (e.g., fraud, disease detection, or identifying rare specialized skills).
+
+
