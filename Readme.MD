@@ -1366,6 +1366,36 @@ Inference is where machine learning delivers real-world value. It transforms raw
 *   **No retraining**: Retraining is a separate, offline process; inference must be extremely fast.
 *   **Production consistency**: The input format during inference must exactly match the format used during training to ensure valid results.
 
+---
+
+## Streamlit App (UI for Model)
+
+### What it does
+The Streamlit application provides a user-friendly interface for the "Project Description Analyzer." It allows anyone—regardless of their technical background—to interact with the ML model, input project details, and receive real-time career insights.
+
+---
+
+### How to run
+To launch the application locally, run the following command in your terminal:
+
+```bash
+streamlit run app.py
+```
+
+---
+
+### Features
+*   **Real-time Prediction**: Deep technical analysis of project descriptions using the pre-trained pipeline.
+*   **Skill Detection**: Automatic identification of core tech stacks (e.g., Python, SQL, React).
+*   **Career Suggestions**: Dynamic, AI-driven recommendations to help users bridge skill gaps and target specific job roles.
+*   **Cached Performance**: Optimized model loading using `st.cache_resource` for instant results.
+
+---
+
+### Key Insight
+Streamlit bridges the gap between complex machine learning models and end-users, converting abstract algorithms into interactive, actionable applications.
+
+
 
 
 
