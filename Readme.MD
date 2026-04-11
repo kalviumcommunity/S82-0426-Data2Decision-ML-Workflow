@@ -1148,42 +1148,41 @@ By using a **Pipeline**, the preprocessing is strictly bound to the training dat
 ## Data Leakage Demonstration
 
 ### Incorrect Workflow (Leaky)
-- **Problem**: TF-IDF (preprocessing) was applied to the FULL dataset before the train-test split.
-- **Consequence**: The vectorizer "memorized" the vocabulary and document frequencies of the test set, creating document representations that leaked future information into the training phase.
-- **Metrics (Inflated)**:
-  - **Leaky CV Score**: 0.8889 (Unrealistic confidence)
-  - **Trustworthy**: ❌ No.
+
+*   **TF-IDF applied before split**: The vectorizer was fitted on the entire dataset, meaning it "saw" word frequencies from the test set before training.
+*   **Contaminated Data**: The model trained on features that were influenced by the test set, violating the principle of isolation.
+*   **Result**: Inflated accuracy and misleading performance metrics.
+
+---
 
 ### Correct Workflow (Pipeline)
-- **Solution**: Raw text was split first. All preprocessing (TF-IDF) was encapsulated within a Scikit-Learn **Pipeline**.
-- **Mechanics**: During cross-validation, the pipeline refitted the TF-IDF vectorizer strictly on the 4 training folds before applying it to the 5th validation fold.
-- **Metrics (Honest)**:
-  - **Pipeline CV Score**: 0.6111 (Reflects true generalization)
-  - **Trustworthy**: ✅ Yes.
 
-### Comparison Table
-| Approach | CV Score | Test Score | Trustworthy |
-| :--- | :--- | :--- | :--- |
-| **Leaky** | 0.8889 | 1.0000 | ❌ No |
-| **Pipeline** | 0.6111 | 0.5000 | ✅ Yes |
+*   **Preprocessing inside pipeline**: TF-IDF transform is part of an atomic `Pipeline` object.
+*   **CV applied safely**: During Cross-Validation, the vectorizer is refitted strictly on the training folds for each split.
+*   **No leakage**: The test data remains completely unseen during the tuning and training phases.
+
+---
 
 ### Key Insight
-Data leakage creates "Mastermind Models" on paper that become "Middling Models" in production. **Atomic Pipelines** are the only way to guarantee that your model's evaluation remains honest and robust against future data.
+
+Pipelines ensure preprocessing is applied only on training data, preventing leakage and ensuring reliable evaluation. This is essential for building models that generalize to real-world production environments.
 
 ---
 
-## Video Script: The Danger of Data Leakage
+## Assignment Concepts (MANDATORY)
 
-1. **The Hook**: "Why did my 95% accurate model just fail in production?"
-2. **The Culprit**: Show code where `vectorizer.fit(X_all)` happens before the split. 
-3. **The Logic**: "By fitting here, you are letting the model 'cheat' by seeing the test set's vocabulary ahead of time."
-4. **The Fix**: Show the `Pipeline([...])` implementation.
-5. **The Proof**: Compare the 0.88 (leaky) score against the 0.61 (honest) score. 
-6. **The Moral**: "A lower, honest score is your best friend. It's the only one that tells you the truth about your production future."
+### 1. Why preprocessing must be fitted on training data?
+Because test data must remain unseen. Otherwise, the model learns from "future" information that would not be available during real-world inference.
 
----
+### 2. How pipeline fixes leakage?
+A Pipeline fits the preprocessing step (like TF-IDF) separately inside each cross-validation fold, ensuring it only uses data from the current training portion.
 
-## Scenario Question Answer
+### 3. Why scaling/TF-IDF before GridSearch causes leakage?
+Because the validation folds are already "known" to the preprocessing step, making the GridSearch results overly optimistic.
 
-### Q: Why did the model drop from 92% to 78%?
-The 92% score was a "hallucination" caused by **Data Leakage**. Because the preprocessing was done on the full dataset, the model indirectly saw patterns from the test data during training. Once deployed, it encountered truly unseen 78% data for the first time, exposing its inability to generalize. Using a **Pipeline** would have prevented this inflation by isolating the training data from the start.
+### 4. Why leakage is dangerous?
+It gives false confidence (high metrics on paper) but leads to catastrophic failure once the model is deployed on truly new data.
+
+### 5. Why lower honest score is better?
+Because it reflects true generalization performance. A realistic 75% score is more valuable for business decisions than a "hallucinated" 95% score.
+
