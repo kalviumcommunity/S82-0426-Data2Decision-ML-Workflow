@@ -17,7 +17,7 @@ def load_data(path: str) -> pd.DataFrame:
             
         assert all(c in df.columns for c in ALL_FEATURES), f"Feature columns {ALL_FEATURES} missing in CSV"
         
-        print("\n📊 DATA LOADING & VALIDATION")
+        print("\nDATA LOADING & VALIDATION")
         print(f"Features: {df[ALL_FEATURES].shape}")
         
         # Target Distribution (Multi-label summary)

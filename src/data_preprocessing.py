@@ -36,8 +36,8 @@ def preprocess_data(df: pd.DataFrame) -> Tuple[pd.Series, pd.Series, pd.DataFram
     X = df[ALL_FEATURES[0]] # For NLP, we typically use the main text feature
     y = df[TARGET_COLUMN]
 
-    print(f"✅ Features Shape: {df[ALL_FEATURES].shape}")
-    print(f"🎯 Target Shape: {y.shape}")
+    print(f"Features Shape: {df[ALL_FEATURES].shape}")
+    print(f"Target Shape: {y.shape}")
     
     # Clean descriptions (using the correct feature name)
     X = X.apply(clean_text)
