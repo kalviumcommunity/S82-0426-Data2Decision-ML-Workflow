@@ -1338,8 +1338,34 @@ Saving the **FULL Pipeline** (Preprocessing + Model) is critical because:
 
 ---
 
-### Conclusion
 Model serialization is a cornerstone of MLOps, enabling efficient deployment, distribution, and long-term reuse of trained systems.
+
+---
+
+## Model Inference
+
+### What is Inference?
+Inference is the stage where a trained and serialized machine learning model is used to generate predictions on new, unseen data. Unlike the training phase, the model is "frozen" and does not learn; it simply applies the patterns it has already acquired.
+
+---
+
+### Steps
+1.  **Load saved model**: Retrieve the serialized pipeline (e.g., `.pkl` file) from disk.
+2.  **Prepare input data**: Format the new descriptions as a `pandas.DataFrame` or iterable of strings.
+3.  **Call predict()**: Execute the pipeline to generate labels or confidence probabilities.
+
+---
+
+### Key Insight
+Inference is where machine learning delivers real-world value. It transforms raw, unseen inputs into actionable insights at high speed.
+
+---
+
+### Important Notes
+*   **Model is frozen**: No parameters are updated during this phase.
+*   **No retraining**: Retraining is a separate, offline process; inference must be extremely fast.
+*   **Production consistency**: The input format during inference must exactly match the format used during training to ensure valid results.
+
 
 
 
