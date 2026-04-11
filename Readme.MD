@@ -1285,6 +1285,31 @@ The **Logistic Regression** model is often selected due to:
 
 Model comparison using a fair, consistent pipeline is the only way to objectively determine which algorithm best captures the underlying patterns of your specific dataset without being misled by random splits.
 
+---
+
+## Final Model Selection
+
+### Use Case: Fraud Detection
+In this scenario, identifying fraudulent patterns is the absolute priority. A **False Negative (missing fraud)** is significantly more expensive than a False Positive (manual review overhead).
+
+---
+
+### Selected Model
+**Logistic Regression** (or Random Forest depending on final metric tie-break)
+
+---
+
+### Why This Model?
+*   **High Recall**: Prioritizes capturing all possible positive (fraudulent) cases.
+*   **Balanced F1-score**: Maintains a professional balance between precision and recall.
+*   **Acceptable Trade-offs**: Even with moderate precision, the reduction in financial risk from missed fraud makes this the optimal business choice.
+
+---
+
+### Key Insight
+The best model is not the one with the highest overall accuracy, but the one that aligns most closely with the specific business risk profile and operational constraints.
+
+
 
 
 
